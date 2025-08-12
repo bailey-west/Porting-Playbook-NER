@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NER Porting & Data Transfer Guide</title>
+  <style>
+    :root{
+      --accent:#6138f5; /* Xfinity Purple */
+      --bg:#ffffff;
+      --muted:#6b7280;
+      --card:#f7f7fb;
+      --max-width:1100px;
+      --radius:12px;
+      --gap:16px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#0f172a;line-height:1.45}
+    .container{max-width:var(--max-width);margin:20px auto;padding:18px}
+    header{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+    .brand{display:flex;flex-direction:column}
+    h1{margin:0;font-size:1.3rem}
+    p.lead{margin:6px 0 0;color:var(--muted);font-size:0.95rem}
+
+    .toolbar{display:flex;gap:12px;align-items:center;margin:12px 0}
+    .search{flex:1;display:flex;align-items:center;background:var(--card);padding:8px;border-radius:999px;gap:8px}
+    .search input{border:0;background:transparent;outline:none;font-size:1rem;width:100%}
+    .toc{background:#fff;border:1px solid #eee;padding:12px;border-radius:10px;box-shadow:0 6px 20px rgba(16,24,40,0.03)}
+    .toc h2{margin:0 0 8px;font-size:1rem}
+    .toc-list{display:flex;flex-wrap:wrap;gap:8px}
+    .toc a{display:inline-block;padding:6px 10px;border-radius:999px;background:#fbfbff;border:1px solid #f0f0ff;color:var(--accent);text-decoration:none;font-weight:600;font-size:0.9rem}
+
+    main{display:flex;gap:18px;margin-top:18px}
+    .content{flex:1}
+    .sidebar{width:300px;flex-shrink:0}
+
+    section.card{background:#fff;border:1px solid #eee;padding:14px;border-radius:12px;margin-bottom:12px}
+    .card h3{margin:0 0 8px;font-size:1.05rem;color:var(--accent)}
+    .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .meta{background:var(--card);padding:10px;border-radius:10px}
+    .meta h4{margin:0 0 6px;font-size:0.85rem;color:var(--muted)}
+    .meta p{margin:0;font-weight:600}
+    .tips{margin-top:10px}
+    .tips h4{margin:0 0 6px;font-size:0.9rem}
+    .badge{display:inline-block;padding:6px 8px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#8f63ff);color:white;font-size:0.8rem}
+
+    /* accordion */
+    .accordion{border-radius:10px;overflow:hidden}
+    .accordion summary{list-style:none;background:linear-gradient(180deg,#fff,#fbfbff);padding:12px;border-radius:10px;cursor:pointer;border:1px solid #eee;display:flex;align-items:center;justify-content:space-between}
+    .accordion[open] summary{box-shadow:0 6px 18px rgba(17,24,39,0.04)}
+    .accordion div{padding:12px;background:transparent;border-top:1px solid #f1f1f7}
+
+    /* responsive */
+    @media (max-width:900px){
+      main{flex-direction:column}
+      .sidebar{width:100%}
+    }
+
+    /* subtle focus states */
+    a:focus, button:focus, input:focus, summary:focus{outline:3px solid rgba(97,56,245,0.12);outline-offset:2px}
+
+    .search-empty{color:var(--muted);padding:12px;text-align:center}
+
+    /* highlight search matches */
+    mark{background:var(--accent);color:white;padding:0 4px;border-radius:3px}
+
+    .small{font-size:0.9rem;color:var(--muted)}
+
+    .copy-btn{background:transparent;border:1px dashed #e7e5ff;color:var(--accent);padding:6px 10px;border-radius:10px;font-weight:600}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>NER Porting &amp; Data Transfer Guide</h1>
+        <p class="lead">Quick carrier lookup, pin/account guidance, and device/data transfer tips — mobile-first and searchable.</p>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+        <span class="badge">Built by Williston</span>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="search" role="search" aria-label="Search carriers">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <input id="filterInput" type="search" placeholder="Search carriers, pins, tips..." aria-label="Search carriers" />
+        <button id="clearBtn" title="Clear" style="background:transparent;border:0;color:var(--muted);font-weight:600;cursor:pointer">Clear</button>
+      </div>
+      <div style="width:12px"></div>
+      <div class="toc">
+        <h2>Directory</h2>
+        <div class="toc-list" id="tocList">
+          <!-- links injected -->
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <div class="content" id="content">
+
+        <!-- Sections generated from PPT content -->
+
+        <section id="verizon" class="card">
+          <h3>Verizon</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>The 10-digit Verizon account number appears in the app or on billing statements; may end in 00001 (omit that suffix when submitting a port).</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>6-digit temporary Number Transfer PIN from Profile &gt; Number Transfer Pin or dial <code>#7678</code>. PIN expires after 7 days.</p></div>
+          </div>
+          <div class="tips">
+            <h4>Tips, Tricks &amp; Unlock</h4>
+            <p class="small">Verizon devices auto-unlock after 60 days. Number locks can be lifted in-app. If porting out while device on installment, remaining balance is due; promotional credits may be lost.</p>
+          </div>
+        </section>
+
+        <section id="verizon-prepaid" class="card">
+          <h3>Verizon Prepaid</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Sign in &gt; Account &gt; Account Details or on bill.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Dial <code>#7678</code> to receive a 6-digit PIN by text. Valid 7 days.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Prepaid support: 1-800-922-0204.</p></div>
+        </section>
+
+        <section id="verizon-business" class="card">
+          <h3>Verizon Business</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Find Line Overview in My Business Wireless: Manage &gt; Account &gt; Services &gt; Manage wireless numbers.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Use account's 4-digit security code; <code>#PORT</code> won't work for business.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">May need to contact IT or Business support.</p></div>
+        </section>
+
+        <section id="att" class="card">
+          <h3>AT&amp;T</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>12-digit account number on website, app, or billing statement. AT&amp;T won't give account numbers over phone (except AT&amp;T Prepaid).</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>6-digit PIN via Profile &gt; People &amp; Permissions &gt; Transfer Phone Number or dial <code>*7678</code>. PIN expires after 4 days.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Devices must be paid off and older than 60 days to unlock. Use att.com/deviceunlock for online unlock requests.</p></div>
+        </section>
+
+        <section id="att-prepaid" class="card">
+          <h3>AT&amp;T Prepaid</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Only obtainable via prepaid support at (800) 901-9878.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>AT&amp;T Prepaid uses the account holder's security PIN (no NTP). Reset at paygonline.com if needed.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Prepaid devices must be paid off for unlocks; use the prepaid support number to request unlocks from agents.</p></div>
+        </section>
+
+        <section id="tmobile" class="card">
+          <h3>T-Mobile</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Found on the physical bill or in the T-Mobile app/website.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Generate via Account &gt; Profile Settings &gt; Request a number transfer PIN in the app or website. Valid 7 days.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Devices must be active on T‑Mobile network 40+ days for unlock; financed devices must be paid off.</p></div>
+        </section>
+
+        <section id="tmobile-prepaid" class="card">
+          <h3>T-Mobile Prepaid</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Account number is the 11-digit phone number (1XXXXXXXXXX).</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Use existing account security PIN; if missing, call 611 and follow prompts to set one.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Porting department: 1-877-789-3106.</p></div>
+        </section>
+
+        <section id="tracfone" class="card">
+          <h3>Tracfone</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Often the device IMEI or last 15 of the SIM ICCID. Validate by texting FOUR to 611611.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Text <code>NTP</code> to 611611 to receive the pin. Must be active on the device to receive text.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Tracfone may default ZIP to Miami (33178) if none set; use this if ports fail. Unlocks via 888-442-5102.</p></div>
+        </section>
+
+        <section id="straight-talk" class="card">
+          <h3>Straight Talk</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Usually IMEI or last 15 of SIM ICCID. Validate by texting FOUR to 611611.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Text <code>NTP</code> to 611611 or request via website. Pin texted to device.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Uses Verizon towers. Unlocks: 888-442-5102. ZIP code accuracy matters for ports.</p></div>
+        </section>
+
+        <section id="google-voice" class="card">
+          <h3>Google Voice</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>The account number is the phone number being ported (enter without spaces).</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Transfer pin = voicemail PIN (default 0000 unless changed).</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Unlocking Google Voice costs $3 and can take up to 5 business days to port in; validation usually occurs within 10 minutes of order submission.</p></div>
+        </section>
+
+        <section id="google-fi" class="card">
+          <h3>Google Fi</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Generate account number and transfer pin by using the "Leave Google Fi" process at fi.google.com &gt; Account &gt; Manage Plan &gt; Leave Google Fi.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Generated during the leave process.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Google Fi devices are unlocked from purchase; ports typically complete within ~10 minutes.</p></div>
+        </section>
+
+        <section id="cricket" class="card">
+          <h3>Cricket</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Found in the app, website, or by calling (800) 274-2538.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Generated in myCricket app under Settings &gt; Line Settings &gt; Get my Number Transfer PIN or dial <code>*7678</code>. Valid 5 days.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Devices must be paid off and active on network for 6 months to unlock.</p></div>
+        </section>
+
+        <section id="mint-mobile" class="card">
+          <h3>Mint Mobile</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Retrieve via live chat at mintmobile.com; ask for "Account Number." An agent will supply account number and transfer pin in chat.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Provided in chat.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Devices on DPP locked for 12 months; phones bought in full eligible after 60 days.</p></div>
+        </section>
+
+        <section id="boost-mobile" class="card">
+          <h3>Boost Mobile</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>9-digit account number not in app; call 1-888-266-7848 and follow prompts.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Use the 4-digit Boost security PIN set at account creation.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Follow menu prompts carefully; support chat may be necessary.</p></div>
+        </section>
+
+        <section id="consumer-cellular" class="card">
+          <h3>Consumer Cellular</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Find in online profile or call (888) 750-5519. 9-digit account number.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Available online or by calling (888) 750-5519.</p></div>
+          </div>
+          <div class="tips"><h4>Tips</h4><p class="small">Requires last 4 of SSN for verification; ports may need Tier 2 checks if held.</p></div>
+        </section>
+
+        <section id="visible" class="card">
+          <h3>Visible</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Phone number or account number in Visible app under Profile &gt; Port-Out PIN.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Port-Out PIN requested via email/text; valid 7 days and max 3 per 24 hours.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Port-out PIN is time-limited; check email/text for PIN message.</p></div>
+        </section>
+
+        <section id="h2o" class="card">
+          <h3>H2O</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Call 1-800-643-4926 to request 8-digit account number and NTP. A call is required to release number.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Released during call; verify recent outgoing calls for identity.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Ports may take up to 3 days; ensure address is correct.</p></div>
+        </section>
+
+        <section id="metro" class="card">
+          <h3>Metro</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>9-digit account in account settings or billing statements.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Request via My Account &gt; Profile &gt; Request a Transfer Pin; code sent via text. Valid 7 days.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">8-digit security pin often defaulted to primary's birthday; not the NTP but may help with verification.</p></div>
+        </section>
+
+        <section id="us-cellular" class="card">
+          <h3>US Cellular</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Shown top-left in the online account page.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>PIN commonly is the last 4 of the telephone number.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Customer service: 1-888-944-9400.</p></div>
+        </section>
+
+        <section id="page-plus" class="card">
+          <h3>Page Plus</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Usually IMEI unless account is older when it might be the 10-digit phone number.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Pin is last 4 of account number or sometimes 1234.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">See unlock policy on carrier support pages.</p></div>
+        </section>
+
+        <section id="lively" class="card">
+          <h3>Lively</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Sign into Lively account using your 10-digit number and view My Account page.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Dial <code>#7678</code> to receive a 6-digit pin via text.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Customer support: 800-733-6632.</p></div>
+        </section>
+
+        <section id="credo" class="card">
+          <h3>CREDO</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Same as your member number. Text ACCOUNT to 27336 to get it or check bill.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Call (800) 411-0848 to request a Number Transfer PIN.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Devices may need to be paid off; manual release sometimes required.</p></div>
+        </section>
+
+        <section id="simple-mobile" class="card">
+          <h3>Simple Mobile</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Last 15 digits of the ICCID.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Text NPP or NTP to 611611 to get a 4-digit PIN.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Support: 877-878-7908.</p></div>
+        </section>
+
+        <section id="us-mobile" class="card">
+          <h3>US Mobile</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Call 1-888-848-1788 or email help@usmobile.com to request your account number.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Try <code>1234</code> first; if not, call to request a new pin.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Ports sometimes require manual approval by the carrier.</p></div>
+        </section>
+
+        <section id="ultra-mobile" class="card">
+          <h3>Ultra Mobile</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Found at the top-left of the online account portal.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Usually the last four digits of the Ultra Mobile phone number.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Support: 888-777-0446.</p></div>
+        </section>
+
+        <section id="telcel" class="card">
+          <h3>Telcel</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>MEID/IMEI or last 15 digits of SIM card.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>See Telcel America My Account page; set a passcode if blank.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Support: 800-220-9518.</p></div>
+        </section>
+
+        <section id="net10" class="card">
+          <h3>Net10</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>MEID/IMEI or last 15 of ICCID.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Often <code>0000</code> or last 4 of the phone number.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Text 611611 for some account actions.</p></div>
+        </section>
+
+        <section id="hello-mobile" class="card">
+          <h3>Hello Mobile</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Top-right of Hello Mobile online account or call 888-954-3556.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Usually the last 4 digits of the Hello Mobile telephone number.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Support: 1-888-95-HELLO or dial 611 from Hello Mobile phone.</p></div>
+        </section>
+
+        <section id="republic-wireless" class="card">
+          <h3>Republic Wireless (by DISH)</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Each phone number may have its own account number; find online via My Account &gt; Manage Line &gt; Transfer My Number Out.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Call Republic Care at 866-550-9843 to get your Port Out PIN.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Porting can take up to 7 days.</p></div>
+        </section>
+
+        <section id="spectrum-mobile" class="card">
+          <h3>Spectrum Mobile</h3>
+          <div class="meta-grid">
+            <div class="meta"><h4>Account Number</h4><p>Billing statement shows account number and security code top-left.</p></div>
+            <div class="meta"><h4>Transfer PIN</h4><p>Request via Spectrum support; see 833-224-6603.</p></div>
+          </div>
+          <div class="tips"><h4>Notes</h4><p class="small">Contact Spectrum support for porting details.</p></div>
+        </section>
+
+        <section id="data-transfer" class="card">
+          <h3>Data Transfer Guide</h3>
+          <div class="accordion">
+            <details open>
+              <summary>Transferring to Samsung</summary>
+              <div>
+                <p class="small">Use Samsung Smart Switch on both devices (available on Play Store & App Store). For Android-to-Android, prefer cable for stability; Bluetooth is available as a fallback. If Smart Switch fails, try Verizon Content Transfer or Google Backup. Contacts can often be shared via Bluetooth from Contacts &gt; Share.</p>
+              </div>
+            </details>
+            <details>
+              <summary>Transferring to Google / Motorola</summary>
+              <div>
+                <p class="small">Use Verizon Content Transfer (works across carriers). Both devices on same WiFi, choose which is new/old and follow prompts. If content missing, check Google Backup (contacts/photos/videos) under Google account restore.</p>
+              </div>
+            </details>
+            <details>
+              <summary>Transferring to iPhone</summary>
+              <div>
+                <p class="small">Use Move to iOS when setting up new iPhone. For iPhone-to-iPhone, use iCloud restore or Quick Start. If new phone requires update during transfer, skip transfer, update, then factory reset and retry transfer for best results. If old device is lost, restore from iCloud or set up as new device.</p>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <p class="small">Notes: This page was generated from the "Porting Playbook NER" presentation. If you'd like any carrier reordered, sections added/removed, or a printable version, I can update it.</p>
+      </div>
+
+      <aside class="sidebar">
+        <div class="toc card" style="position:sticky;top:18px">
+          <h2 style="margin-bottom:10px">Quick Nav</h2>
+          <div id="tocLinks" style="display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:6px"></div>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button id="expandAll" class="copy-btn">Expand All</button>
+            <button id="collapseAll" class="copy-btn">Collapse All</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const sections = Array.from(document.querySelectorAll('section.card'));
+    const tocList = document.getElementById('tocList');
+    const tocLinks = document.getElementById('tocLinks');
+
+    // populate directory & sidebar nav
+    sections.forEach(s => {
+      const id = s.id;
+      const title = s.querySelector('h3')?.innerText || id;
+      const a = document.createElement('a');
+      a.href = '#' + id;
+      a.innerText = title;
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+      });
+      tocList.appendChild(a);
+
+      const btn = document.createElement('a');
+      btn.href = '#'+id;
+      btn.innerText = title;
+      btn.style.padding='8px 10px';
+      btn.style.borderRadius='8px';
+      btn.style.textDecoration='none';
+      btn.style.color='var(--accent)';
+      btn.addEventListener('click', e => {e.preventDefault(); document.getElementById(id).scrollIntoView({behavior:'smooth'});});
+      tocLinks.appendChild(btn);
+    });
+
+    // create search index
+    const index = sections.map(s=>({
+      id:s.id,
+      text:(s.innerText||'').toLowerCase()
+    }));
+
+    const filterInput = document.getElementById('filterInput');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function highlightText(node, term){
+      if(!term) return;
+      const re = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'ig');
+      node.querySelectorAll('mark').forEach(m=>m.replaceWith(m.textContent));
+      node.childNodes.forEach(child=>{
+        if(child.nodeType===3){
+          const match = child.textContent.match(re);
+          if(match){
+            const span = document.createElement('span');
+            span.innerHTML = child.textContent.replace(re, m=>`<mark>${m}</mark>`);
+            child.replaceWith(span);
+          }
+        } else if(child.nodeType===1){
+          highlightText(child, term);
+        }
+      });
+    }
+
+    function runFilter(){
+      const q = filterInput.value.trim().toLowerCase();
+      let any = false;
+      sections.forEach(s=>{
+        const match = q==='' || s.innerText.toLowerCase().includes(q);
+        s.style.display = match ? 'block' : 'none';
+        if(match) any=true;
+        // remove existing marks then highlight
+        s.querySelectorAll('mark').forEach(m=>m.replaceWith(m.textContent));
+        if(q){
+          // simple highlight — only within text nodes
+          highlightText(s, q);
+        }
+      });
+      if(!any){
+        if(!document.querySelector('.search-empty')){
+          const n = document.createElement('div');
+          n.className='search-empty';
+          n.innerText = 'No results — try another keyword.';
+          document.getElementById('content').appendChild(n);
+        }
+      } else {
+        const se = document.querySelector('.search-empty'); if(se) se.remove();
+      }
+    }
+
+    filterInput.addEventListener('input', runFilter);
+    clearBtn.addEventListener('click', ()=>{filterInput.value='';filterInput.focus();runFilter();});
+
+    // Expand/Collapse details in data-transfer area
+    document.getElementById('expandAll').addEventListener('click', ()=>{
+      document.querySelectorAll('details').forEach(d=>d.open=true);
+    });
+    document.getElementById('collapseAll').addEventListener('click', ()=>{
+      document.querySelectorAll('details').forEach(d=>d.open=false);
+    });
+
+    // keyboard accessibility: space toggles summary when focused
+    document.addEventListener('keydown', e=>{
+      if(e.key==='/' && document.activeElement!==filterInput){ e.preventDefault(); filterInput.focus(); }
+    });
+
+    // smooth hash change scroll behavior
+    if('scrollBehavior' in document.documentElement.style){
+      history.scrollRestoration = 'manual';
+    }
+  </script>
+</body>
+</html>
