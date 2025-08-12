@@ -30,7 +30,7 @@
       text-align: center;
     }
     .brand{display:flex;flex-direction:column; align-items: center;}
-    h1{margin:0;font-size:1.3rem; color: var(--accent); font-weight: 700;}
+    h1{margin:0;font-size:3.25rem; color: var(--accent); font-weight: 800;}
     p.lead{margin:6px 0 0;color:var(--muted);font-size:0.95rem}
     .badge-container{
         display:flex;
@@ -55,7 +55,7 @@
       padding:8px;
       border-radius:999px;
       gap:8px;
-      border: 1px solid var(--accent); /* Added border */
+      border: 1px solid var(--accent);
     }
     .search-container input{border:0;background:transparent;outline:none;font-size:1rem;width:100%}
     .actions{display:flex;gap:8px; justify-content: center; width: 100%;}
@@ -73,7 +73,11 @@
 
     section.card{background:#fff;border:1px solid #eee;padding:14px;border-radius:12px;margin-bottom:12px}
     .card h3{margin:0 0 8px;font-size:1.05rem;color:var(--accent)}
-    .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .meta-grid{
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap:10px;
+    }
     .meta{background:var(--card);padding:10px;border-radius:10px}
     .meta h4{margin:0 0 6px;font-size:0.85rem;color:var(--muted)}
     .meta p{margin:0;font-weight:600}
@@ -160,9 +164,9 @@
     }
     .ai-result h4 {
       font-size: 1.1rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 0.5rem;
-      color: #333;
+      color: var(--accent);
     }
     .ai-result .loading {
       text-align: center;
@@ -172,6 +176,22 @@
       white-space: pre-wrap;
       word-wrap: break-word;
       font-family: inherit;
+    }
+
+    .ai-result-content h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        color: var(--accent);
+    }
+
+    .ai-result-content ul {
+        list-style: disc;
+        padding-left: 20px;
+    }
+    .ai-result-content li {
+        margin-bottom: 0.25rem;
     }
   </style>
 </head>
@@ -200,7 +220,9 @@
       <div class="actions">
         <button id="expandAll" class="copy-btn">Expand All</button>
         <button id="collapseAll" class="copy-btn">Collapse All</button>
+        <button id="sortAZ" class="copy-btn">Sort A-Z</button>
       </div>
+      <p class="small text-center mt-4 font-bold">Use the "Elaborate on this" button often for more detailed troubleshooting info!</p>
     </div>
     
     <div class="ai-result" id="aiResult" style="display: none;"></div>
@@ -208,9 +230,14 @@
     <main>
       <div class="content" id="content">
 
+        <section id="ai-disclaimer" class="card">
+            <h3>Important Disclaimer</h3>
+            <p class="small">The information provided on this page and by the AI tools is for reference purposes only. Carrier policies, porting requirements, and data transfer methods can change without notice. Always verify information with the carrier's official support channels for the most accurate and up-to-date details. AI-generated responses are not a substitute for official technical support.</p>
+        </section>
+
         <!-- All carrier sections with updated content and links -->
         <section id="verizon" class="card">
-          <details open>
+          <details>
             <summary>
               <h3>Verizon</h3>
               <a href="https://www.verizon.com/support/port-out-faqs/" target="_blank" class="link-btn" title="View Verizon Port-Out Info">
@@ -220,59 +247,16 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>The 10-digit Verizon account number is available in the My Verizon app or on your monthly billing statements. When submitting a port-out request, be sure to omit any extra suffixes, such as '-00001', which may appear on the bill.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Verizon uses a temporary, 6-digit Number Transfer PIN (NTP). You can obtain this by dialing <code>#PORT</code> or <code>#7678</code> from the device you wish to port out. This PIN is valid for 7 days and is sent via text message. Alternatively, you can generate it from your online account profile under "Number Transfer Pin" settings.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>10-digit number from bill or app. Omit suffixes like '-00001'.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Dial #PORT (#7678) from device. 6-digit PIN valid for 7 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666</p></div>
               </div>
               <div class="tips">
-                <h4>Tips, Tricks &amp; Unlock</h4>
-                <p class="small">Verizon devices are generally unlocked automatically after 60 days of activation. If you need to lift a number lock before this period, you can often do so via the My Verizon app. Be aware that if you are porting out a device on an installment plan, the remaining balance will become due and any promotional credits may be lost. For support, call 1-800-922-0204.</p>
+                <h4>Tips &amp; Unlock</h4>
+                <p class="small">Devices unlock after 60 days. Porting financed device makes balance due. Support: 1-800-922-0204.</p>
               </div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('Verizon')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="verizon-prepaid" class="card">
-          <details>
-            <summary>
-              <h3>Verizon Prepaid</h3>
-              <a href="https://www.verizon.com/support/prepaid-port-out-faqs/" target="_blank" class="link-btn" title="View Verizon Prepaid Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>To find your account number, sign into your Verizon Prepaid account online and navigate to "Account" then "Account Details." It can also be found on your billing statement.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Similar to standard Verizon, you can get a 6-digit PIN by dialing <code>#PORT</code> or <code>#7678</code> from your device. The PIN is valid for 7 days and will be sent via text message. You may also be able to request it through your online account portal.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">For specific prepaid support or porting issues, the direct contact number is 1-800-922-0204.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Verizon Prepaid')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="verizon-business" class="card">
-          <details>
-            <summary>
-              <h3>Verizon Business</h3>
-              <a href="https://www.verizon.com/support/port-out-faqs/" target="_blank" class="link-btn" title="View Verizon Business Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>The account number can be found under "Line Overview" within the "My Business Wireless" section of your online account. You can navigate to it via Manage > Account > Services > Manage wireless numbers.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Unlike consumer accounts, Verizon Business typically uses the account's 4-digit security code as the port-out PIN. The <code>#PORT</code> or <code>#7678</code> method may not work for business lines.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">If you're unsure of the security code or need assistance, it's best to contact your company's IT department or call Verizon Business support directly.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Verizon Business')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -289,34 +273,13 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your 12-digit account number is available on your billing statement, on the AT&T website, or in the app. Note that AT&T will not provide this number over the phone for consumer accounts (AT&T Prepaid is an exception).</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>To generate your 6-digit Number Transfer PIN (NTP), go to your profile settings in the app or website and look for "People & Permissions" > "Transfer Phone Number." You can also dial <code>*PORT</code> or <code>*7678</code>. The PIN expires after 4 days.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>12-digit number from bill, website, or app. Not given over phone.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Dial *PORT (*7678) or generate in app/website. Expires in 4 days.</p></div>
+                 <div class="meta"><h4>SPID</h4><p>5555</p></div>
               </div>
-              <div class="tips"><h4>Tips</h4><p class="small">Devices must be fully paid off and active on the network for at least 60 days before they can be unlocked. To request an unlock, visit att.com/deviceunlock.</p></div>
+              <div class="tips"><h4>Tips</h4><p class="small">Device must be active 60 days & paid off to unlock. Request at att.com/deviceunlock.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('AT&T')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="att-prepaid" class="card">
-          <details>
-            <summary>
-              <h3>AT&amp;T Prepaid</h3>
-              <a href="https://www.att.com/support/article/wireless/KM1020436/" target="_blank" class="link-btn" title="View AT&T Prepaid Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>For prepaid accounts, you must contact customer support at (800) 901-9878 to obtain your account number. It is not available online.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>AT&T Prepaid uses the 4-digit account holder's security PIN instead of a separate NTP. If the PIN has been forgotten, it can be reset via paygonline.com.</p></div>
-              </div>
-              <div class="tips"><h4>Tips</h4><p class="small">Devices must be paid in full to be eligible for unlock. You will need to contact prepaid support to request an unlock from an agent.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('AT&T Prepaid')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -333,43 +296,22 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is available on your physical bill or within the T-Mobile app/website. It is typically a 9-digit number. Some older accounts may use a different format, so always verify on the bill.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You can generate a temporary transfer PIN by logging into your account and navigating to "Profile Settings," then "Request a number transfer PIN." The PIN is valid for 7 days.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>9-digit number from your bill or T-Mobile app/website.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Generate temporary PIN in account profile settings. Valid for 7 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7777</p></div>
               </div>
-              <div class="tips"><h4>Tips</h4><p class="small">For a device to be eligible for unlock, it must be active on the T-Mobile network for at least 40 days, and any financed device must be paid off in full.</p></div>
+              <div class="tips"><h4>Tips</h4><p class="small">Device must be active for 40 days and fully paid off to be unlocked.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('T-Mobile')">Elaborate on this</button>
               </div>
             </div>
           </details>
         </section>
-
-        <section id="t-mobile-prepaid" class="card">
-          <details>
-            <summary>
-              <h3>T-Mobile Prepaid</h3>
-              <a href="https://www.t-mobile.com/support/account/transfer-your-number-pin-from-t-mobile" target="_blank" class="link-btn" title="View T-Mobile Prepaid Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is your 11-digit phone number (1XXXXXXXXXX).</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>T-Mobile Prepaid uses your existing account security PIN. If you do not have one, you can set it up by calling 611 from your T-Mobile phone and following the prompts.</p></div>
-              </div>
-              <div class="tips"><h4>Tips</h4><p class="small">The porting department can be reached directly at 1-877-789-3106 for any issues.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('T-Mobile Prepaid')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
+        
         <section id="tracfone" class="card">
           <details>
             <summary>
-              <h3>Tracfone</h3>
+              <h3>Tracfone &amp; Affiliates (Straight Talk, Simple Mobile, etc.)</h3>
               <a href="https://www.tracfone.com/support/port-out" target="_blank" class="link-btn" title="View Tracfone Port-Out Info">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Official Page
@@ -377,79 +319,13 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is often the device's IMEI or the last 15 digits of the SIM card's ICCID. You can confirm this by texting "FOUR" to 611611.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Text "NTP" to 611611 to receive your transfer PIN. The device must be active to receive this text.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>Device's IMEI or last 15 digits of SIM ICCID. Text "FOUR" to 611611 to confirm.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Text "NTP" to 611611 from the device to receive the PIN.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666 (Verizon-based)</p></div>
               </div>
-              <div class="tips"><h4>Tips</h4><p class="small">If a port fails, it may be because Tracfone defaults the ZIP code to Miami, FL (33178). You can try using this ZIP code in the port request. For unlock support, call 888-442-5102.</p>
-              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Brands include: Tracfone, Straight Talk, Simple Mobile, Total by Verizon, Page Plus, Net10, Telcel. Port may fail if ZIP code is wrong (try 33178 for Miami, FL). Unlock support: 888-442-5102.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('Tracfone')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="straight-talk" class="card">
-          <details>
-            <summary>
-              <h3>Straight Talk</h3>
-              <a href="https://www.straighttalk.com/support/port-out" target="_blank" class="link-btn" title="View Straight Talk Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Similar to Tracfone, your account number is typically the IMEI of the device or the last 15 digits of the SIM ICCID. Texting "FOUR" to 611611 can help confirm this.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Text "NTP" to 611611 from the phone you want to port out to receive your PIN. This can also be requested through their website.</p></div>
-              </div>
-              <div class="tips"><h4>Tips</h4><p class="small">Straight Talk operates on Verizon towers. For device unlocks, you can call 888-442-5102. Porting can be sensitive to the ZIP code on file, so ensure it is accurate.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Straight Talk')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="google-voice" class="card">
-          <details>
-            <summary>
-              <h3>Google Voice</h3>
-              <a href="https://support.google.com/voice/answer/1065667?hl=en" target="_blank" class="link-btn" title="View Google Voice Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>The account number for porting out is simply the 10-digit Google Voice phone number itself (enter without spaces).</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The transfer PIN is your voicemail PIN. The default is usually <code>0000</code>, but it may have been changed. You will need to unlock your number for a one-time $3 fee before porting out.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Porting a Google Voice number can take up to 5 business days, though validation with a new carrier often happens within 10 minutes of the order being placed.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Google Voice')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="google-fi" class="card">
-          <details>
-            <summary>
-              <h3>Google Fi</h3>
-              <a href="https://support.google.com/fi/answer/6246240?hl=en" target="_blank" class="link-btn" title="View Google Fi Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>You can generate your account number and transfer PIN by initiating the "Leave Google Fi" process on the website at fi.google.com. Navigate to Account > Manage Plan > Leave Google Fi.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The PIN is generated as part of the "Leave Google Fi" process. It is a unique, temporary code that must be used within the given timeframe.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Google Fi phones are unlocked by default when purchased. Ports typically complete very quickly, often within 10 minutes.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Google Fi')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -466,12 +342,59 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number can be found in the myCricket app, on the website, or by calling customer support at (800) 274-2538.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>To get a transfer PIN, go to "Settings" > "Line Settings" > "Get my Number Transfer PIN" in the myCricket app. You can also dial <code>*PORT</code> or <code>*7678</code> from your phone. The PIN is valid for 5 days.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>Find in myCricket app, website, or call (800) 274-2538.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Dial *PORT (*7678) or get in app. Valid for 5 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>5555</p></div>
               </div>
-              <div class="tips"><h4>Tips</h4><p class="small">Devices must be paid off and have been active on the network for 6 months to be unlocked.</p></div>
+              <div class="tips"><h4>Tips</h4><p class="small">Devices must be active on network for 6 months to be unlocked.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('Cricket')">Elaborate on this</button>
+              </div>
+            </div>
+          </details>
+        </section>
+        
+        <section id="google-fi" class="card">
+          <details>
+            <summary>
+              <h3>Google Fi</h3>
+              <a href="https://support.google.com/fi/answer/6246240?hl=en" target="_blank" class="link-btn" title="View Google Fi Port-Out Info">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                Official Page
+              </a>
+            </summary>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Generated via "Leave Google Fi" process on fi.google.com.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Generated along with account number during "Leave Fi" process.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7777 (T-Mobile) / 6528 (US Cellular)</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">Google Fi phones are unlocked by default. Ports are usually very fast.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Google Fi')">Elaborate on this</button>
+              </div>
+            </div>
+          </details>
+        </section>
+        
+        <section id="google-voice" class="card">
+          <details>
+            <summary>
+              <h3>Google Voice</h3>
+              <a href="https://support.google.com/voice/answer/1065667?hl=en" target="_blank" class="link-btn" title="View Google Voice Port-Out Info">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                Official Page
+              </a>
+            </summary>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>The 10-digit Google Voice phone number.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>The account's voicemail PIN. Must pay a $3 fee to unlock number.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7927 (Inteliquent)</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">Porting can take up to 5 business days but usually validates quickly.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Google Voice')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -488,10 +411,11 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>You can retrieve your account number by starting a live chat on the mintmobile.com website. An agent will provide you with both your account number and transfer PIN.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is provided to you by a customer service agent during the live chat session.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>Request from agent via live chat on mintmobile.com.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Provided by agent during live chat session.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7777</p></div>
               </div>
-              <div class="tips"><h4>Tips</h4><p class="small">Mint Mobile devices on a device payment plan (DPP) are locked for 12 months. Phones purchased outright are eligible for unlock after 60 days of service.</p></div>
+              <div class="tips"><h4>Tips</h4><p class="small">Devices on payment plan locked for 12 months. Outright phones unlocked after 60 days.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('Mint Mobile')">Elaborate on this</button>
               </div>
@@ -502,7 +426,7 @@
         <section id="boost-mobile" class="card">
           <details>
             <summary>
-              <h3>Boost Mobile</h3>
+              <h3>Boost Mobile / Boost Infinite</h3>
               <a href="https://www.boostmobile.com/support/faq/account-management/port-out-faqs" target="_blank" class="link-btn" title="View Boost Mobile Port-Out Info">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Official Page
@@ -510,10 +434,11 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Boost Mobile's 9-digit account number is not available in the app. You must call customer support at 1-888-266-7848 and follow the menu prompts to get it.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You will use the 4-digit security PIN that was set up when the account was created.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>Must call support at 1-888-266-7848 to get the 9-digit account number.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>The 4-digit security PIN set up when account was created.</p></div>
+                <div class="meta"><h4>SPID</h4><p>5555 (AT&T) / 6755 (Dish)</p></div>
               </div>
-              <div class="tips"><h4>Notes</h4><p class="small">You may need to speak to a support agent to get the correct information, so follow the menu prompts carefully or request to speak with a representative.</p></div>
+              <div class="tips"><h4>Notes</h4><p class="small">Boost Infinite requires calling 1-866-979-5095 for a temporary PIN valid for 7 days.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('Boost Mobile')">Elaborate on this</button>
               </div>
@@ -532,10 +457,11 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your 9-digit account number can be found in your online profile or by calling customer support at (888) 750-5519.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is available online or by calling (888) 750-5519.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>9-digit number from online profile or call (888) 750-5519.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Available online or by calling (888) 750-5519.</p></div>
+                <div class="meta"><h4>SPID</h4><p>5555 (AT&T) / 7777 (T-Mobile)</p></div>
               </div>
-              <div class="tips"><h4>Tips</h4><p class="small">Consumer Cellular often requires the last 4 digits of the account holder's Social Security Number for verification. If a port is held up, it may require a check with a Tier 2 support agent.</p></div>
+              <div class="tips"><h4>Tips</h4><p class="small">Often requires last 4 of SSN for verification. May need Tier 2 support for holds.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('Consumer Cellular')">Elaborate on this</button>
               </div>
@@ -554,56 +480,36 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>The account number for Visible is your 10-digit phone number. In some cases, a separate account number can be found in the Visible app under "Profile" > "Port-Out PIN."</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You can request a port-out PIN via the Visible app or website. The PIN is sent to you via email or text and is valid for 7 days. You can request a maximum of 3 PINs per 24-hour period.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>Found in Visible app under "Profile" > "Port-Out PIN."</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Request in app/website. Sent via email/text, valid for 7 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666</p></div>
               </div>
-              <div class="tips"><h4>Notes</h4><p class="small">The port-out PIN is a time-sensitive code, so be sure to check your email or text messages for the most current PIN before submitting a port request.</p></div>
+              <div class="tips"><h4>Notes</h4><p class="small">The port-out PIN is time-sensitive; use the most recent one received.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('Visible')">Elaborate on this</button>
               </div>
             </div>
           </details>
         </section>
-
-        <section id="h2o-wireless" class="card">
+        
+        <section id="spectrum-mobile" class="card">
           <details>
             <summary>
-              <h3>H2O Wireless</h3>
-              <a href="https://www.h2owireless.com/support/faqs" target="_blank" class="link-btn" title="View H2O Wireless Port-Out Info">
+              <h3>Spectrum Mobile</h3>
+              <a href="https://www.spectrum.net/support/mobile/transferring-your-number" target="_blank" class="link-btn" title="View Spectrum Mobile Port-Out Info">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Official Page
               </a>
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>To get your 8-digit account number, you must call customer support at 1-800-643-4926. A call is required to release the number for porting.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The transfer PIN is also provided during the phone call with a support agent. They may ask for recent outgoing call details to verify your identity.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>Listed on billing statement or in online account.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Must call Spectrum support at 833-224-6603 to request.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666</p></div>
               </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Ports from H2O Wireless can take up to 3 days to complete. Ensure the address on file is correct to avoid delays.</p></div>
+              <div class="tips"><h4>Notes</h4><p class="small">You will need to contact Spectrum support for any specific porting details or issues.</p></div>
               <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('H2O Wireless')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="metro" class="card">
-          <details>
-            <summary>
-              <h3>Metro by T-Mobile</h3>
-              <a href="https://www.metrobyt-mobile.com/support/how-to/transfer-your-phone-number" target="_blank" class="link-btn" title="View Metro by T-Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your 9-digit account number can be found in your online account settings or on your billing statements.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>To request a transfer PIN, log in to "My Account," navigate to "Profile," and select "Request a Transfer Pin." The PIN is sent via text and is valid for 7 days.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">The 8-digit security PIN is often the account holder's birthday (MMDDYYYY) and is not the same as the transfer PIN, but may be needed for verification.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Metro by T-Mobile')">Elaborate on this</button>
+                <button class="copy-btn" onclick="elaborate('Spectrum Mobile')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -620,10 +526,11 @@
             </summary>
             <div>
               <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is typically displayed in the top-left corner of your online account page.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The transfer PIN is commonly the last 4 digits of the telephone number you wish to port out.</p></div>
+                <div class="meta"><h4>Account Number</h4><p>Displayed in top-left corner of online account page.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Commonly the last 4 digits of the phone number being ported.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6528</p></div>
               </div>
-              <div class="tips"><h4>Notes</h4><p class="small">For any issues or further assistance, you can contact US Cellular customer service at 1-888-944-9400.</p></div>
+              <div class="tips"><h4>Notes</h4><p class="small">For issues, contact customer service at 1-888-944-9400.</p></div>
               <div style="margin-top: 10px;">
                 <button class="copy-btn" onclick="elaborate('US Cellular')">Elaborate on this</button>
               </div>
@@ -631,688 +538,34 @@
           </details>
         </section>
 
-        <section id="page-plus" class="card">
-          <details>
-            <summary>
-              <h3>Page Plus Cellular</h3>
-              <a href="https://www.pagepluscellular.com/support/faqs/" target="_blank" class="link-btn" title="View Page Plus Cellular Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>The account number is usually the IMEI of the device. For older accounts, it might be the 10-digit phone number. Verifying online or through support is best.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The PIN is either the last 4 digits of the account number or a simple default like <code>1234</code>.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Refer to the carrier's support pages for their device unlock policy.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Page Plus Cellular')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="lively" class="card">
-          <details>
-            <summary>
-              <h3>Lively</h3>
-              <a href="https://www.lively.com/support/porting-faqs" target="_blank" class="link-btn" title="View Lively Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Sign into your Lively account online using your 10-digit phone number to view your account details on the "My Account" page.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Similar to Verizon, you can dial <code>#PORT</code> or <code>#7678</code> from your Lively phone to receive a 6-digit PIN via text message.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">For any questions or support, you can contact Lively customer support at 800-733-6632.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Lively')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="credo" class="card">
-          <details>
-            <summary>
-              <h3>CREDO Mobile</h3>
-              <a href="https://www.credomobile.com/contact-us" target="_blank" class="link-btn" title="View CREDO Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the same as your member number. You can get it by texting "ACCOUNT" to 27336 or by checking your monthly bill.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>To receive a Number Transfer PIN, you must call customer support at (800) 411-0848.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Devices on a payment plan must be paid off before porting out. Sometimes a manual release is required by a support agent.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('CREDO Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="simple-mobile" class="card">
-          <details>
-            <summary>
-              <h3>Simple Mobile</h3>
-              <a href="https://www.tracfone.com/support/port-out" target="_blank" class="link-btn" title="View Simple Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the last 15 digits of the ICCID (SIM card number).</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>To get your 4-digit PIN, text "NPP" or "NTP" to 611611 from the phone you want to port out.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">For support, you can call 877-878-7908.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Simple Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="us-mobile" class="card">
-          <details>
-            <summary>
-              <h3>US Mobile</h3>
-              <a href="https://help.usmobile.com/49774-porting-out/porting-out-of-us-mobile" target="_blank" class="link-btn" title="View US Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>You can request your account number by calling 1-888-848-1788 or by emailing help@usmobile.com.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You can try using the default <code>1234</code> first. If that doesn't work, you will need to call customer support to request a new PIN.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Some porting requests may require manual approval from the carrier, which can cause delays.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('US Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="ultra-mobile" class="card">
-          <details>
-            <summary>
-              <h3>Ultra Mobile</h3>
-              <a href="https://www.ultramobile.com/help/porting-out/" target="_blank" class="link-btn" title="View Ultra Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is available in the top-left corner of your online account portal.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The transfer PIN is typically the last four digits of your Ultra Mobile phone number.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">For support, you can call 888-777-0446.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Ultra Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="telcel" class="card">
-          <details>
-            <summary>
-              <h3>Telcel</h3>
-              <a href="https://telcel-americas.com/support" target="_blank" class="link-btn" title="View Telcel Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the MEID/IMEI of your device or the last 15 digits of the SIM card number.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You can find your transfer PIN on your Telcel America "My Account" page. If it is blank, you can set a passcode there.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">For customer support, call 800-220-9518.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Telcel')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="net10" class="card">
-          <details>
-            <summary>
-              <h3>Net10 Wireless</h3>
-              <a href="https://www.tracfone.com/support/port-out" target="_blank" class="link-btn" title="View Net10 Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the MEID/IMEI of your device or the last 15 digits of the ICCID (SIM card number).</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The PIN is often a default like <code>0000</code> or the last four digits of your phone number.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">You can text 611611 for some account-related actions.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Net10 Wireless')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="hello-mobile" class="card">
-          <details>
-            <summary>
-              <h3>Hello Mobile</h3>
-              <a href="https://hellomobile.com/faq" target="_blank" class="link-btn" title="View Hello Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is in the top-right corner of your online account, or you can call 888-954-3556 to request it.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The PIN is typically the last four digits of your Hello Mobile phone number.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">For support, call 1-888-95-HELLO or dial 611 from your Hello Mobile phone.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Hello Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="republic-wireless" class="card">
-          <details>
-            <summary>
-              <h3>Republic Wireless (by DISH)</h3>
-              <a href="https://help.republicwireless.com/hc/en-us/articles/14732104033303-How-to-Transfer-Your-Number-to-Another-Provider" target="_blank" class="link-btn" title="View Republic Wireless Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Each line may have its own account number. You can find this by logging into "My Account" online and navigating to "Manage Line" then "Transfer My Number Out."</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You must call Republic Care at 866-550-9843 to get your Port Out PIN.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Porting from Republic Wireless can take up to 7 days to complete.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Republic Wireless')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="spectrum-mobile" class="card">
-          <details>
-            <summary>
-              <h3>Spectrum Mobile</h3>
-              <a href="https://www.spectrum.net/support/mobile/transferring-your-number" target="_blank" class="link-btn" title="View Spectrum Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number and security code are listed in the top-left corner of your billing statement. You can also find them in your online account.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You must request a transfer PIN by contacting Spectrum support at 833-224-6603.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">You will need to contact Spectrum support for any specific porting details or issues that arise.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Spectrum Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-        
-        <section id="xfinity-mobile" class="card">
-          <details>
-            <summary>
-              <h3>Xfinity Mobile</h3>
-              <a href="https://www.xfinity.com/mobile/support/article/transfer-phone-number-to-another-carrier" target="_blank" class="link-btn" title="View Xfinity Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the last 4 digits of the account holder's Social Security Number (SSN).</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You must request a Number Transfer PIN by calling or chatting with an Xfinity Mobile representative. The PIN is valid for 7 days.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Xfinity Mobile shares a customer service number with Xfinity Internet and TV. Be prepared for a long wait and be very clear about needing "Xfinity Mobile" support for porting.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Xfinity Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="optimum-mobile" class="card">
-          <details>
-            <summary>
-              <h3>Optimum Mobile</h3>
-              <a href="https://www.optimum.net/support/mobile/transfer-number-from-optimum-mobile" target="_blank" class="link-btn" title="View Optimum Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number can be found on your billing statement. It may be your 11-digit Optimum Mobile phone number with a '1' prefix.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You must call Optimum Mobile support at 1-866-200-7186 to get your port-out PIN.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Optimum Mobile uses the T-Mobile network. Be sure to have your most recent bill ready for verification.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Optimum Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="c-spire" class="card">
-          <details>
-            <summary>
-              <h3>C Spire</h3>
-              <a href="https://www.cspire.com/web/wireless/port-out" target="_blank" class="link-btn" title="View C Spire Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is found on your monthly bill or in your online account portal. For business accounts, it may be different and requires a call to support.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You must call C Spire customer support at 1-855-277-4734 to obtain your port-out PIN.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">C Spire operates its own network in some regions. Be sure to contact them directly for the most accurate information as porting out can be a more manual process.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('C Spire')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="red-pocket" class="card">
-          <details>
-            <summary>
-              <h3>Red Pocket Mobile</h3>
-              <a href="https://help.redpocket.com/hc/en-us/articles/115002967112-How-do-I-port-out-my-number" target="_blank" class="link-btn" title="View Red Pocket Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the last 10 digits of your Red Pocket Mobile SIM card number.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You can get your port-out PIN by logging into your account online or by contacting customer support via live chat or phone.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Red Pocket Mobile operates on all major carrier networks. The port-out process may require specifying which network you are on.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Red Pocket Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="ting" class="card">
-          <details>
-            <summary>
-              <h3>Ting Mobile</h3>
-              <a href="https://ting.com/support/help/port-out" target="_blank" class="link-btn" title="View Ting Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is your 9-digit account number, which can be found by logging into your Ting account online. It is often the account number from your online dashboard.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is the last four digits of your account number.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Ting operates on both the T-Mobile and Verizon networks. You may need to specify which network your service is on when porting out.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Ting Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-        
-        <section id="total-by-verizon" class="card">
-          <details>
-            <summary>
-              <h3>Total by Verizon</h3>
-              <a href="https://www.totalbyverizon.com/support/port-out" target="_blank" class="link-btn" title="View Total by Verizon Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the last 15 digits of the SIM card number (ICCID) of your active line.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You can generate a 4-digit PIN by texting "NTP" to 611611 from the phone you wish to port out.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Total by Verizon is a Tracfone brand, so it shares many of the same porting procedures. The PIN is only valid for a limited time.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Total by Verizon')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="boost-infinite" class="card">
-          <details>
-            <summary>
-              <h3>Boost Infinite</h3>
-              <a href="https://help.boostinfinite.com/docs/porting-out-from-boost-infinite" target="_blank" class="link-btn" title="View Boost Infinite Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number can be found by logging into the Boost Infinite app. You may also need to contact customer support for verification.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You must call Boost Infinite customer support at 1-866-979-5095 to get your port-out PIN. It is a temporary PIN that is valid for 7 days.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Boost Infinite uses a mix of DISH and T-Mobile networks. Be sure to have your account details ready for the support call.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Boost Infinite')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="tello" class="card">
-          <details>
-            <summary>
-              <h3>Tello Mobile</h3>
-              <a href="https://tello.com/help_center/how-do-i-port-my-number-from-tello" target="_blank" class="link-btn" title="View Tello Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is available in the online dashboard on the Tello website. It is typically a 9-digit number that starts with your area code.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is the last four digits of the serial number of your SIM card. It can also be found in your online account details.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Tello Mobile uses the T-Mobile network. All devices must be paid off to be eligible for unlock. You will need to contact support to initiate the unlock process.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Tello Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="lycamobile" class="card">
-          <details>
-            <summary>
-              <h3>Lycamobile</h3>
-              <a href="https://www.lycamobile.us/en/help/faq/porting/" target="_blank" class="link-btn" title="View Lycamobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the last four digits of the SIM card number (ICCID).</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The transfer PIN is your 4-digit PIN that you set up when you activated your account. If you forgot your PIN, you must call customer support to reset it.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Lycamobile uses the T-Mobile network. You will need to contact customer support for any porting-out issues.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Lycamobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="textnow" class="card">
-          <details>
-            <summary>
-              <h3>TextNow</h3>
-              <a href="https://support.textnow.com/help/port-out-faqs" target="_blank" class="link-btn" title="View TextNow Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the last 15 digits of the SIM card's ICCID. You can find this in your account settings online.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You can get your port-out PIN by logging into your account online. The PIN is valid for 7 days.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">TextNow uses the T-Mobile network. You may need to pay a small fee to unlock your number for porting-out, which is typically a one-time fee of $1.99.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('TextNow')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="talk-with-fido" class="card">
-          <details>
-            <summary>
-              <h3>Talk with Fido</h3>
-              <a href="https://www.talkwithfido.com/help/porting-faqs/" target="_blank" class="link-btn" title="View Talk with Fido Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the 10-digit phone number. In some cases, it may be the account number from your online dashboard.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is the last four digits of your Social Security Number (SSN).</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Talk with Fido operates on the T-Mobile network. Be sure to have your personal details ready for verification when porting out.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Talk with Fido')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="freedompop" class="card">
-          <details>
-            <summary>
-              <h3>FreedomPop</h3>
-              <a href="https://support.freedompop.com/hc/en-us/articles/202685790-How-do-I-port-my-number-to-another-carrier" target="_blank" class="link-btn" title="View FreedomPop Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the IMEI of your device or the last 15 digits of the SIM card ICCID. You can find this in your online account details.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>To get your port-out PIN, you must call customer support. You may also need to submit a port-out request through the website's support portal.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">FreedomPop uses the AT&T and T-Mobile networks. You will need to contact customer support at 1-888-701-0422 to initiate the port-out process.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('FreedomPop')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="gen-mobile" class="card">
-          <details>
-            <summary>
-              <h3>Gen Mobile</h3>
-              <a href="https://genmobile.com/help/port-out" target="_blank" class="link-btn" title="View Gen Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is your 10-digit phone number. You can find this in your online account details.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is the last four digits of your SIM card number (ICCID). You may also need to use your account security PIN.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Gen Mobile uses the T-Mobile and AT&T networks. Be sure to contact customer support at 1-833-287-5588 for any porting issues.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Gen Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="wing-tel" class="card">
-          <details>
-            <summary>
-              <h3>Wing Tel</h3>
-              <a href="https://www.wingtel.com/faq" target="_blank" class="link-btn" title="View Wing Tel Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is your 10-digit phone number. You can find this in your online account details.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is the last four digits of your Social Security Number (SSN).</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Wing Tel uses the AT&T and T-Mobile networks. You will need to contact customer support at 1-844-482-1400 for any porting issues.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Wing Tel')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="patriot-mobile" class="card">
-          <details>
-            <summary>
-              <h3>Patriot Mobile</h3>
-              <a href="https://www.patriotmobile.com/faq" target="_blank" class="link-btn" title="View Patriot Mobile Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is your 10-digit phone number. You can find this in your online account details.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is the last four digits of your Social Security Number (SSN).</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Patriot Mobile uses the Verizon, AT&T, and T-Mobile networks. Be sure to contact customer support at 1-866-935-4309 for any porting issues.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Patriot Mobile')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="pure-talk" class="card">
-          <details>
-            <summary>
-              <h3>Pure Talk</h3>
-              <a href="https://www.puretalkusa.com/support/port-out" target="_blank" class="link-btn" title="View Pure Talk Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is the 9-digit account number. You can find this by logging into your online account or on your monthly bill.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is the last four digits of your Pure Talk phone number.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">Pure Talk uses the AT&T network. All devices must be paid off to be eligible for unlock. You will need to contact support to initiate the unlock process.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Pure Talk')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="t-mobile-connect" class="card">
-          <details>
-            <summary>
-              <h3>T-Mobile Connect</h3>
-              <a href="https://www.t-mobile.com/support/account/transfer-your-number-pin-from-t-mobile" target="_blank" class="link-btn" title="View T-Mobile Connect Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your account number is your 11-digit phone number (1XXXXXXXXXX).</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>Your transfer PIN is your existing account security PIN. If you do not have one, you can set it up by calling 611 from your T-Mobile phone and following the prompts.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">T-Mobile Connect is a prepaid service from T-Mobile, so it shares the same porting procedures. The porting department can be reached directly at 1-877-789-3106.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('T-Mobile Connect')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="mint-mobile-unlimited" class="card">
-          <details>
-            <summary>
-              <h3>Mint Mobile Unlimited</h3>
-              <a href="https://www.mintmobile.com/help/port-out-information/" target="_blank" class="link-btn" title="View Mint Mobile Unlimited Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>To get your account number, you must contact customer support via live chat on the Mint Mobile website.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>The transfer PIN will be provided by the support agent during the live chat session. This is a temporary PIN that is valid for a limited time.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">The porting procedures are the same as other Mint Mobile plans. Be sure to have your account details ready for verification.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Mint Mobile Unlimited')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-
-        <section id="boost-mobile-unlimited" class="card">
-          <details>
-            <summary>
-              <h3>Boost Mobile Unlimited</h3>
-              <a href="https://www.boostmobile.com/support/faq/account-management/port-out-faqs" target="_blank" class="link-btn" title="View Boost Mobile Unlimited Port-Out Info">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                Official Page
-              </a>
-            </summary>
-            <div>
-              <div class="meta-grid">
-                <div class="meta"><h4>Account Number</h4><p>Your 9-digit account number is not in the app. You must call customer support at 1-888-266-7848 to obtain it.</p></div>
-                <div class="meta"><h4>Transfer PIN</h4><p>You will use the 4-digit security PIN that was set up when the account was created. It is not a separate transfer PIN.</p></div>
-              </div>
-              <div class="tips"><h4>Notes</h4><p class="small">The porting procedures are the same as other Boost Mobile plans. Be sure to follow the menu prompts carefully or request to speak with a representative.</p></div>
-              <div style="margin-top: 10px;">
-                <button class="copy-btn" onclick="elaborate('Boost Mobile Unlimited')">Elaborate on this</button>
-              </div>
-            </div>
-          </details>
-        </section>
-        
         <section id="data-transfer" class="card">
-          <h3>Data Transfer Guide</h3>
-          <div class="accordion">
-            <details open>
-              <summary>Transferring from Android to Android</summary>
-              <div>
-                <p class="small">For most Android devices, the recommended method is to use Google's built-in data transfer utility. During the setup process of a new Android device, it will prompt you to transfer data from your old device. You can choose to use a cable for a faster, more stable transfer or connect wirelessly via Bluetooth or Wi-Fi. Apps, contacts, photos, and settings will all be transferred. Samsung devices also have their own application called Samsung Smart Switch which is a very reliable option for transferring data from any device to a Samsung device.</p>
-              </div>
-            </details>
-            <details>
-              <summary>Transferring from Android to iPhone</summary>
-              <div>
-                <p class="small">For this transfer, you must use the "Move to iOS" app. This app is available on the Google Play Store and is designed to transfer your contacts, message history, camera photos and videos, web bookmarks, mail accounts, and calendars from your Android phone to a new iPhone. You must start this process during the initial setup of the new iPhone. If the iPhone has already been set up, you will need to factory reset it to access this feature.</p>
-              </div>
-            </details>
-            <details>
-              <summary>Transferring from iPhone to iPhone</summary>
-              <div>
-                <p class="small">The best way to transfer from an old iPhone to a new one is by using the "Quick Start" feature. By placing your new iPhone near your old iPhone, the new device will detect it and guide you through a wireless data transfer. You can also restore your new iPhone from an iCloud or iTunes backup. If the new phone requires an update during the transfer, it's best to skip the transfer, complete the update, factory reset the device again, and then retry the data transfer for the most stable result.</p>
-              </div>
-            </details>
-          </div>
+          <details>
+            <summary>
+              <h3>Data Transfer Guide</h3>
+            </summary>
+            <div>
+                <div class="accordion">
+                  <details>
+                    <summary>Transferring from Android to Android</summary>
+                    <div>
+                      <p class="small">For most Android devices, the recommended method is to use Google's built-in data transfer utility. During the setup process of a new Android device, it will prompt you to transfer data from your old device. You can choose to use a cable for a faster, more stable transfer or connect wirelessly via Bluetooth or Wi-Fi. Apps, contacts, photos, and settings will all be transferred. Samsung devices also have their own application called Samsung Smart Switch which is a very reliable option for transferring data from any device to a Samsung device.</p>
+                    </div>
+                  </details>
+                  <details>
+                    <summary>Transferring from Android to iPhone</summary>
+                    <div>
+                      <p class="small">For this transfer, you must use the "Move to iOS" app. This app is available on the Google Play Store and is designed to transfer your contacts, message history, camera photos and videos, web bookmarks, mail accounts, and calendars from your Android phone to a new iPhone. You must start this process during the initial setup of the new iPhone. If the iPhone has already been set up, you will need to factory reset it to access this feature.</p>
+                    </div>
+                  </details>
+                  <details>
+                    <summary>Transferring from iPhone to iPhone</summary>
+                    <div>
+                      <p class="small">The best way to transfer from an old iPhone to a new one is by using the "Quick Start" feature. By placing your new iPhone near your old iPhone, the new device will detect it and guide you through a wireless data transfer. You can also restore your new iPhone from an iCloud or iTunes backup. If the new phone requires an update during the transfer, it's best to skip the transfer, complete the update, factory reset the device again, and then retry the data transfer for the most stable result.</p>
+                    </div>
+                  </details>
+                </div>
+            </div>
+          </details>
         </section>
 
         <section id="tech-support" class="card">
@@ -1337,8 +590,9 @@
     // Constants for API calls
     const MODEL_NAME = 'gemini-2.5-flash-preview-05-20';
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=`;
+    const API_KEY = ""; // This will be provided by the runtime environment
 
-    const sections = Array.from(document.querySelectorAll('section.card'));
+    const originalSections = Array.from(document.querySelectorAll('section.card'));
     const filterInput = document.getElementById('filterInput');
     const clearBtn = document.getElementById('clearBtn');
     const aiSearchInput = document.getElementById('aiSearchInput');
@@ -1349,11 +603,14 @@
     const techSupportBtn = document.getElementById('techSupportBtn');
     const clearTechSupportBtn = document.getElementById('clearTechSupportBtn');
     const techSupportResultDiv = document.getElementById('techSupportResult');
+    const sortBtn = document.getElementById('sortAZ');
+    const contentContainer = document.getElementById('content');
     
     let isFetching = false;
     let retries = 0;
     const maxRetries = 3;
     const retryDelay = 1000;
+    let isSorted = false;
 
     /**
      * Highlights text matches within a given DOM node.
@@ -1384,9 +641,15 @@
     function runFilter(){
       const q = filterInput.value.trim().toLowerCase();
       let any = false;
-      sections.forEach(s=>{
-        if (s.id === 'data-transfer' || s.id === 'tech-support') {
-          s.style.display = 'block';
+      
+      const currentSections = Array.from(contentContainer.querySelectorAll('section.card'));
+      
+      currentSections.forEach(s=>{
+        // For non-carrier sections, check if any of their content matches the query
+        if (s.id === 'data-transfer' || s.id === 'tech-support' || s.id === 'ai-disclaimer') {
+          const match = q === '' || s.innerText.toLowerCase().includes(q);
+          s.style.display = match ? 'block' : 'none';
+          if (match) any = true;
           s.querySelectorAll('mark').forEach(m => m.replaceWith(m.textContent));
           if (q) {
             highlightText(s, q);
@@ -1394,7 +657,9 @@
           return;
         }
 
-        const match = q === '' || s.innerText.toLowerCase().includes(q);
+        // For carrier sections, check if the content of the details tag matches
+        const detailsContent = s.querySelector('details')?.innerText || '';
+        const match = q === '' || detailsContent.toLowerCase().includes(q);
         s.style.display = match ? 'block' : 'none';
         if (match) any = true;
         
@@ -1416,7 +681,7 @@
     }
 
     /**
-     * Performs a search using the Gemini API for unlisted carriers.
+     * Performs a search using the Gemini API.
      * @param {string} prompt The prompt for the AI.
      * @param {HTMLElement} resultDiv The div to display the results.
      */
@@ -1425,15 +690,17 @@
 
       isFetching = true;
       resultDiv.style.display = 'block';
-      resultDiv.innerHTML = `<div class="loading">Searching...</div>`;
+      resultDiv.innerHTML = `<div class="loading">Please wait one moment for search to process...</div>`;
       retries = 0;
 
       const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
       const payload = { contents: chatHistory };
+      const apiUrlWithKey = `${API_URL}${API_KEY}`;
+
 
       async function attemptFetch() {
         try {
-          const response = await fetch(API_URL, {
+          const response = await fetch(apiUrlWithKey, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -1452,10 +719,20 @@
           const result = await response.json();
           const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "No information found for this carrier.";
 
+          // Replace Markdown with HTML for better visual scanning
+          let formattedText = text.trim();
+          // Bolding for headers like **Account Number:**
+          formattedText = formattedText.replace(/\*\*(.*?):\*\*/g, '<h4 class="text-md font-bold mt-3 mb-1 text-purple-600">$1</h4>');
+          // Bullet points
+          formattedText = formattedText.replace(/^\s*[-*]\s+(.*)$/gm, '<ul><li class="list-disc ml-5">$1</li></ul>');
+          // Consolidate adjacent ULs
+          formattedText = formattedText.replace(/<\/ul>\s*<ul>/g, '');
+          
           resultDiv.innerHTML = `
             <h4>AI Search Result</h4>
-            <pre>${text}</pre>
+            <div class="ai-result-content">${formattedText}</div>
           `;
+          
         } catch (error) {
           resultDiv.innerHTML = `<h4>Error</h4><p>An error occurred. Please try again later. Details: ${error.message}</p>`;
         } finally {
@@ -1465,11 +742,29 @@
       attemptFetch();
     }
     
-    // Function to handle the "Elaborate on this" button click
+    /**
+     * Handles the "Elaborate on this" button click by generating a moderately detailed, scannable guide.
+     * @param {string} carrierName The name of the carrier to elaborate on.
+     */
     window.elaborate = function(carrierName) {
-      const prompt = `Provide a detailed explanation of the number porting process for ${carrierName}. Include common issues that may arise, troubleshooting steps, and key tips for a successful transfer.`;
+      const prompt = `As an AI assistant for an Xfinity Mobile employee, provide a moderately detailed, scannable guide for porting a number from ${carrierName}. The employee needs this to help a customer port their number IN to Xfinity Mobile. Format the response for easy visual scanning. Use the following structure:
+
+**Account Number:**
+- Provide clear, step-by-step instructions on where the customer can find this.
+
+**Transfer PIN:**
+- Provide clear, step-by-step instructions on how the customer can get this. Mention any expiration details.
+
+**Troubleshooting & Key Tips:**
+- List 2-3 common issues or important tips for a smooth port from this carrier.
+
+**Support Number:**
+- Provide the primary customer support phone number for ${carrierName}.
+
+Do not include any welcoming or closing remarks. Only provide the information in this exact format.`;
       runAISearch(prompt, aiResultDiv);
-      aiSearchInput.value = ''; // Clear the AI search bar since this is a different type of query
+      aiSearchInput.value = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     filterInput.addEventListener('input', runFilter);
@@ -1478,7 +773,21 @@
     aiSearchBtn.addEventListener('click', () => {
         const query = aiSearchInput.value.trim();
         if (query) {
-            const prompt = `Provide porting information for the carrier "${query}". Specifically, provide details on how to find the Account Number and Transfer PIN. Include any relevant tips, such as a contact number or specific websites to visit. If the carrier is not a major US provider or if you cannot find the information, please state that explicitly. Format the response clearly using Markdown headings.`;
+            const prompt = `As an AI assistant for an Xfinity Mobile employee, provide a moderately detailed, scannable guide for porting a number from "${query}". The employee needs this to help a customer port their number IN to Xfinity Mobile. Format the response for easy visual scanning. Use the following structure:
+
+**Account Number:**
+- Provide clear, step-by-step instructions on where the customer can find this.
+
+**Transfer PIN:**
+- Provide clear, step-by-step instructions on how the customer can get this. Mention any expiration details.
+
+**Troubleshooting & Key Tips:**
+- List 2-3 common issues or important tips for a smooth port from this carrier.
+
+**Support Number:**
+- Provide the primary customer support phone number for "${query}".
+
+If you cannot find specific information for "${query}", state that clearly. Do not include any welcoming or closing remarks.`;
             runAISearch(prompt, aiResultDiv);
         } else {
             aiResultDiv.style.display = 'none';
@@ -1499,7 +808,7 @@
     techSupportBtn.addEventListener('click', () => {
         const query = techSupportInput.value.trim();
         if (query) {
-            const prompt = `Provide detailed technical support and troubleshooting steps for the following scenario: "${query}". Be specific and provide clear, actionable advice.`;
+            const prompt = `As a technical support expert for an Xfinity Mobile employee, provide concise and easy to read technical support and troubleshooting steps for the following porting-out scenario: "${query}". Be specific and provide clear, actionable advice to help an employee resolve the issue with a customer. Use bullet points for steps. Do not include any information on porting IN.`;
             runAISearch(prompt, techSupportResultDiv);
         } else {
             techSupportResultDiv.style.display = 'none';
@@ -1522,6 +831,38 @@
     });
     document.getElementById('collapseAll').addEventListener('click', ()=>{
       document.querySelectorAll('details').forEach(d=>d.open=false);
+    });
+
+    // New sort functionality
+    sortBtn.addEventListener('click', () => {
+        const carrierSections = Array.from(contentContainer.querySelectorAll('section.card')).filter(s => !['data-transfer', 'tech-support', 'ai-disclaimer'].includes(s.id));
+        const nonCarrierSections = Array.from(contentContainer.querySelectorAll('section.card')).filter(s => ['data-transfer', 'tech-support', 'ai-disclaimer'].includes(s.id));
+
+        if (isSorted) {
+            // Revert to original order
+            contentContainer.innerHTML = '';
+            originalSections.forEach(s => contentContainer.appendChild(s));
+            isSorted = false;
+        } else {
+            // Sort alphabetically
+            carrierSections.sort((a, b) => {
+                const textA = a.querySelector('h3').innerText.toUpperCase();
+                const textB = b.querySelector('h3').innerText.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            });
+            contentContainer.innerHTML = '';
+            // Add disclaimer first
+            const disclaimer = originalSections.find(s => s.id === 'ai-disclaimer');
+            if(disclaimer) contentContainer.appendChild(disclaimer);
+
+            carrierSections.forEach(s => contentContainer.appendChild(s));
+            
+            // Add other non-carrier sections at the end
+            nonCarrierSections.forEach(s => {
+                if(s.id !== 'ai-disclaimer') contentContainer.appendChild(s)
+            });
+            isSorted = true;
+        }
     });
 
     document.addEventListener('keydown', e=>{
