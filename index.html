@@ -5,47 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NER Porting & Data Transfer Guide</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="https://placehold.co/32x32/6138f5/ffffff?text=N" type="image/png">
-  <link rel="apple-touch-icon" href="https://placehold.co/180x180/6138f5/ffffff?text=N">
   <style>
     :root{
       --accent:#6138f5; /* Xfinity Purple */
       --bg:#ffffff;
-      --text-primary: #0f172a;
       --muted:#6b7280;
       --card:#f7f7fb;
-      --border-color: #eee;
-      --max-width:1200px;
+      --max-width:1100px;
       --radius:12px;
-      --gap:18px;
+      --gap:16px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-
-    /* --- Dark Mode Theme --- */
-    body.dark-mode {
-        --bg: #111827;
-        --text-primary: #d1d5db;
-        --card: #1f2937;
-        --muted: #9ca3af;
-        --border-color: #374151;
-    }
-
-    /* --- Utility Classes --- */
-    .hidden {
-        display: none;
-    }
-
     *{box-sizing:border-box}
-    html {
-        scroll-behavior: smooth;
-    }
-    body{
-        margin:0;
-        background:var(--bg);
-        color:var(--text-primary);
-        line-height:1.45;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
+    body{margin:0;background:var(--bg);color:#0f172a;line-height:1.45}
     .container{max-width:var(--max-width);margin:20px auto;padding:18px}
     header{
       display:flex;
@@ -66,23 +38,7 @@
         align-items:center;
         margin-top: 10px;
     }
-    .theme-btn {
-        background: transparent;
-        border: 1px dashed var(--accent);
-        color: var(--accent);
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background-color 0.2s, color 0.2s;
-    }
-    .theme-btn:hover {
-        background-color: rgba(97, 56, 245, 0.1);
-    }
-    
+
     .toolbar{
       display:flex;
       flex-direction: column;
@@ -101,38 +57,25 @@
       gap:8px;
       border: 1px solid var(--accent);
     }
-    .search-container input{border:0;background:transparent;outline:none;font-size:1rem;width:100%; color: var(--text-primary);}
+    .search-container input{border:0;background:transparent;outline:none;font-size:1rem;width:100%}
     .actions{display:flex;gap:8px; justify-content: center; width: 100%;}
     .actions .copy-btn {
         width: 50%;
     }
-    /* --- Sort Button Active State --- */
-    .actions .copy-btn.active {
-        background: var(--accent);
-        color: white;
-        border-style: solid;
-    }
 
-
-    /* --- Main Layout --- */
     main{
       display:flex;
-      gap:var(--gap);
+      gap:18px;
       margin-top:18px;
-      align-items: flex-start;
+      justify-content: center;
     }
-    .content{flex: 1; min-width: 0;}
-    .sidebar{
-        flex: 0 0 320px;
-        position: sticky;
-        top: 20px;
-    }
+    .content{flex:1; max-width: 800px;}
 
-    section.card{background:var(--bg);border:1px solid var(--border-color);padding:14px;border-radius:12px;margin-bottom:12px; transition: background-color 0.3s, border-color 0.3s;}
+    section.card{background:#fff;border:1px solid #eee;padding:14px;border-radius:12px;margin-bottom:12px}
     .card h3{margin:0 0 8px;font-size:1.05rem;color:var(--accent)}
     .meta-grid{
         display:grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap:10px;
     }
     .meta{background:var(--card);padding:10px;border-radius:10px}
@@ -141,14 +84,13 @@
     .tips{margin-top:10px}
     .tips h4{margin:0 0 6px;font-size:0.9rem}
     .badge{display:inline-block;padding:6px 8px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#8f63ff);color:white;font-size:0.8rem}
-    
-    /* --- Animated Accordion --- */
+
     .card summary {
       background: linear-gradient(180deg,#fff,#fbfbff);
       padding: 12px;
       border-radius: 10px;
       cursor: pointer;
-      border: 1px solid var(--border-color);
+      border: 1px solid #eee;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -156,38 +98,29 @@
       -webkit-user-select: none;
       user-select: none;
     }
-    body.dark-mode .card summary {
-        background: linear-gradient(180deg, #2c3a4f, #1f2937);
+    .card summary::-webkit-details-marker {
+        display: none;
     }
-    .card summary::-webkit-details-marker { display: none; }
     .card details[open] summary {
       box-shadow: 0 6px 18px rgba(17,24,39,0.04);
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
       margin-bottom: -1px;
     }
-    .card details > .details-wrapper {
-        display: grid;
-        grid-template-rows: 0fr;
-        transition: grid-template-rows 0.3s ease-in-out;
+    .card details > div {
+      border: 1px solid #eee;
+      border-top: 0;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      padding: 12px;
     }
-    .card details[open] > .details-wrapper {
-        grid-template-rows: 1fr;
+    .card h3 {
+      margin: 0;
     }
-    .card .details-content {
-        overflow: hidden;
-        border: 1px solid var(--border-color);
-        border-top: 0;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-        padding: 12px;
-    }
-    .card h3 { margin: 0; }
-    
-    /* --- Responsive Layout --- */
+
     @media (max-width:900px){
       main{flex-direction:column}
-      .sidebar{width:100%; position: static;}
+      .sidebar{width:100%}
     }
 
     a:focus, button:focus, input:focus, summary:focus{outline:3px solid rgba(97,56,245,0.12);outline-offset:2px}
@@ -197,7 +130,7 @@
     mark{background:var(--accent);color:white;padding:0 4px;border-radius:3px}
 
     .small{font-size:0.9rem;color:var(--muted)}
-    
+
     .copy-btn, .link-btn{
       background:transparent;
       border:1px dashed #e7e5ff;
@@ -210,7 +143,6 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      transition: background-color 0.2s, color 0.2s;
     }
     .link-btn {
       font-size: 0.8rem;
@@ -221,19 +153,14 @@
         border: 1px solid #e7e5ff;
         background: #fbfbff;
     }
-    body.dark-mode .card .link-btn {
-        background: var(--card);
-        border-color: var(--border-color);
-    }
 
     .ai-result {
-      background: var(--card);
-      border: 1px solid var(--border-color);
+      background: #f7f7fb;
+      border: 1px solid #eee;
       border-radius: 12px;
       padding: 1rem;
       margin-top: 1rem;
       position: relative;
-      min-height: 100px;
     }
     .ai-result h4 {
       font-size: 1.1rem;
@@ -241,33 +168,14 @@
       margin-bottom: 0.5rem;
       color: var(--accent);
     }
-    
-    /* --- Loading Animation --- */
-    .loading-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        min-height: 80px;
+    .ai-result .loading {
+      text-align: center;
+      color: #6138f5;
     }
-    .pulsing-loader {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-    }
-    .pulsing-loader div {
-        width: 10px;
-        height: 10px;
-        background-color: var(--accent);
-        border-radius: 50%;
-        animation: pulse 1.4s infinite ease-in-out both;
-    }
-    .pulsing-loader div:nth-child(1) { animation-delay: -0.32s; }
-    .pulsing-loader div:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes pulse {
-        0%, 80%, 100% { transform: scale(0); }
-        40% { transform: scale(1.0); }
+    .ai-result pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: inherit;
     }
 
     .ai-result-content h4 {
@@ -285,33 +193,6 @@
     .ai-result-content li {
         margin-bottom: 0.25rem;
     }
-
-    /* --- Back to Top Button --- */
-    #backToTopBtn {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: var(--accent);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(20px);
-        transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
-        z-index: 1000;
-    }
-    #backToTopBtn.visible {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
   </style>
 </head>
 <body>
@@ -323,31 +204,28 @@
       </div>
       <div class="badge-container">
         <span class="badge">Built by Bailey West</span>
-        <button id="theme-toggle" class="theme-btn" title="Toggle dark mode" type="button">
-          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-        </button>
       </div>
     </header>
 
-    <form class="toolbar" onsubmit="return false;">
+    <div class="toolbar">
       <div class="search-container">
         <input id="aiSearchInput" type="search" placeholder="AI Search for unlisted carriers..." aria-label="AI Search for carriers" />
-        <button id="aiSearchBtn" class="copy-btn" type="button">Search</button>
-        <button id="clearAiBtn" title="Clear AI Search" style="background:transparent;border:0;color:var(--muted);font-weight:600;cursor:pointer" type="button">Clear</button>
+        <button id="aiSearchBtn" class="copy-btn">Search</button>
+        <button id="clearAiBtn" title="Clear AI Search" style="background:transparent;border:0;color:var(--muted);font-weight:600;cursor:pointer">Clear</button>
       </div>
       <div class="search-container">
         <input id="filterInput" type="search" placeholder="Filter listed carriers..." aria-label="Filter listed carriers" />
-        <button id="clearBtn" title="Clear" style="background:transparent;border:0;color:var(--muted);font-weight:600;cursor:pointer" type="button">Clear</button>
+        <button id="clearBtn" title="Clear" style="background:transparent;border:0;color:var(--muted);font-weight:600;cursor:pointer">Clear</button>
       </div>
       <div class="actions">
-        <button id="expandAll" class="copy-btn" type="button">Expand All</button>
-        <button id="collapseAll" class="copy-btn" type="button">Collapse All</button>
-        <button id="sortAZ" class="copy-btn" type="button">Sort A-Z</button>
+        <button id="expandAll" class="copy-btn">Expand All</button>
+        <button id="collapseAll" class="copy-btn">Collapse All</button>
+        <button id="sortAZ" class="copy-btn">Sort A-Z</button>
       </div>
       <p class="small text-center mt-4 font-bold">Use the "Elaborate on this" button often for more detailed porting info!</p>
-    </form>
-    
-    <div class="ai-result hidden" id="aiResult"></div>
+    </div>
+
+    <div class="ai-result" id="aiResult" style="display: none;"></div>
 
     <main>
       <div class="content" id="content">
@@ -357,29 +235,28 @@
             <p class="small">The information provided on this page and by the AI tools is for reference purposes only. Carrier policies, porting requirements, and data transfer methods can change without notice. Always verify information with the carrier's official support channels for the most accurate and up-to-date details. AI-generated responses are not a substitute for official technical support.</p>
         </section>
 
-        <!-- Carrier sections updated to remove SPID and add wrapper for animation -->
+        <!-- All carrier sections with updated content and links -->
         <section id="verizon" class="card">
           <details>
             <summary>
               <h3>Verizon</h3>
               <a href="https://www.verizon.com/" target="_blank" class="link-btn" title="View Verizon Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Find your 10-digit number on your bill or in the My Verizon app. Omit suffixes like '-00001'.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Dial #PORT (#7678) from the phone. The 6-digit PIN is valid for 7 days.</p></div>
-                </div>
-                <div class="tips">
-                  <h4>Tips &amp; Unlock</h4>
-                  <p class="small">Devices unlock 60 days after purchase. Porting a financed device makes the balance due. Support: 1-800-922-0204.</p>
-                </div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Verizon')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Find your 10-digit number on your bill or in the My Verizon app. Omit suffixes like '-00001'.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Dial #PORT (#7678) from the phone. The 6-digit PIN is valid for 7 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666</p></div>
+              </div>
+              <div class="tips">
+                <h4>Tips &amp; Unlock</h4>
+                <p class="small">Devices unlock 60 days after purchase. Porting a financed device makes the balance due. Support: 1-800-922-0204.</p>
+              </div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Verizon')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -390,20 +267,19 @@
             <summary>
               <h3>Verizon Prepaid</h3>
               <a href="https://www.verizon.com/plans/prepaid/" target="_blank" class="link-btn" title="View Verizon Prepaid Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Find in your online account under "Account Details" or on your bill.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Dial #PORT (#7678) from the phone. The 6-digit PIN is valid for 7 days.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">Prepaid support: 1-800-922-0204.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Verizon Prepaid')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Find in your online account under "Account Details" or on your bill.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Dial #PORT (#7678) from the phone. The 6-digit PIN is valid for 7 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">Prepaid support: 1-800-922-0204.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Verizon Prepaid')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -414,20 +290,19 @@
             <summary>
               <h3>Verizon Business</h3>
               <a href="https://www.verizon.com/business/" target="_blank" class="link-btn" title="View Verizon Business Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Find in the "My Business Wireless" online portal under "Line Overview".</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Typically the account's 4-digit security code. #PORT method does not work.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">Contact your company's IT admin or Verizon Business support for help.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Verizon Business')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Find in the "My Business Wireless" online portal under "Line Overview".</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Typically the account's 4-digit security code. #PORT method does not work.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">Contact your company's IT admin or Verizon Business support for help.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Verizon Business')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -438,20 +313,19 @@
             <summary>
               <h3>AT&amp;T</h3>
               <a href="https://www.att.com/" target="_blank" class="link-btn" title="View AT&T Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Your 12-digit number is on your bill or in your online account. Support will not provide it over the phone.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Dial *PORT (*7678) or generate a PIN in your online account. It expires in 4 days.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Device must be active 60 days & paid off to unlock. Request at att.com/deviceunlock.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('AT&T')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Your 12-digit number is on your bill or in your online account. Support will not provide it over the phone.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Dial *PORT (*7678) or generate a PIN in your online account. It expires in 4 days.</p></div>
+                 <div class="meta"><h4>SPID</h4><p>5555</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Device must be active 60 days & paid off to unlock. Request at att.com/deviceunlock.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('AT&T')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -462,20 +336,19 @@
             <summary>
               <h3>AT&amp;T Prepaid</h3>
               <a href="https://www.att.com/prepaid/" target="_blank" class="link-btn" title="View AT&T Prepaid Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>You must call support at (800) 901-9878 to get your account number.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>This is your 4-digit account security PIN. Reset at paygonline.com if forgotten.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Devices must be paid in full to be unlocked. Contact support to request an unlock.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('AT&T Prepaid')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>You must call support at (800) 901-9878 to get your account number.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>This is your 4-digit account security PIN. Reset at paygonline.com if forgotten.</p></div>
+                <div class="meta"><h4>SPID</h4><p>5555</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Devices must be paid in full to be unlocked. Contact support to request an unlock.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('AT&T Prepaid')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -486,20 +359,19 @@
             <summary>
               <h3>T-Mobile</h3>
               <a href="https://www.t-mobile.com/" target="_blank" class="link-btn" title="View T-Mobile Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Find your 9-digit account number on your bill or in your T-Mobile account profile.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Generate a temporary PIN in your account profile settings. It's valid for 7 days.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Device must be active for 40 days and fully paid off to be unlocked.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('T-Mobile')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Find your 9-digit account number on your bill or in your T-Mobile account profile.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Generate a temporary PIN in your account profile settings. It's valid for 7 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7777</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Device must be active for 40 days and fully paid off to be unlocked.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('T-Mobile')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -510,20 +382,19 @@
             <summary>
               <h3>T-Mobile Prepaid</h3>
               <a href="https://www.t-mobile.com/prepaid" target="_blank" class="link-btn" title="View T-Mobile Prepaid Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Your 11-digit phone number (e.g., 1XXXXXXXXXX).</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Your existing account security PIN. Call 611 to set one up if needed.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Porting department: 1-877-789-3106.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('T-Mobile Prepaid')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Your 11-digit phone number (e.g., 1XXXXXXXXXX).</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Your existing account security PIN. Call 611 to set one up if needed.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7777</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Porting department: 1-877-789-3106.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('T-Mobile Prepaid')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -534,20 +405,19 @@
             <summary>
               <h3>Tracfone</h3>
               <a href="https://www.tracfone.com/" target="_blank" class="link-btn" title="View Tracfone Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>The device's IMEI. For BYOD, it's the last 15 digits of the SIM (ICCID). Text 'FOUR' to 611611.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Text 'NTP' to 611611 from the device to receive your Number Transfer PIN.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Port may fail if ZIP is wrong (try 33178 for Miami, FL). Unlock support: 888-442-5102.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Tracfone')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>The device's IMEI. For BYOD, it's the last 15 digits of the SIM (ICCID). Text 'FOUR' to 611611.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Text 'NTP' to 611611 from the device to receive your Number Transfer PIN.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666 (Verizon-based)</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Port may fail if ZIP is wrong (try 33178 for Miami, FL). Unlock support: 888-442-5102.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Tracfone')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -558,20 +428,19 @@
             <summary>
               <h3>Straight Talk</h3>
               <a href="https://www.straighttalk.com/" target="_blank" class="link-btn" title="View Straight Talk Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>The device's IMEI. For BYOD, it's the last 15 digits of the SIM (ICCID). Text 'FOUR' to 611611.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Text 'NTP' to 611611 from the device to receive your Number Transfer PIN.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Unlock support: 888-442-5102. Ensure the ZIP code on file is accurate.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Straight Talk')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>The device's IMEI. For BYOD, it's the last 15 digits of the SIM (ICCID). Text 'FOUR' to 611611.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Text 'NTP' to 611611 from the device to receive your Number Transfer PIN.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666 (Verizon-based)</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Unlock support: 888-442-5102. Ensure the ZIP code on file is accurate.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Straight Talk')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -582,20 +451,19 @@
             <summary>
               <h3>Google Voice</h3>
               <a href="https://voice.google.com/" target="_blank" class="link-btn" title="View Google Voice Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Your 10-digit Google Voice phone number.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Your account's voicemail PIN. You must pay a $3 fee to unlock the number for porting.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">Porting can take up to 5 business days but usually validates quickly.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Google Voice')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Your 10-digit Google Voice phone number.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Your account's voicemail PIN. You must pay a $3 fee to unlock the number for porting.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7927 (Inteliquent)</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">Porting can take up to 5 business days but usually validates quickly.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Google Voice')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -606,20 +474,19 @@
             <summary>
               <h3>Google Fi</h3>
               <a href="https://fi.google.com/" target="_blank" class="link-btn" title="View Google Fi Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Generated via the "Leave Google Fi" process on fi.google.com.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Generated along with the account number during the "Leave Fi" process.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">Google Fi phones are unlocked by default. Ports are usually very fast.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Google Fi')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Generated via the "Leave Google Fi" process on fi.google.com.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Generated along with the account number during the "Leave Fi" process.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7777 (T-Mobile) / 6528 (US Cellular)</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">Google Fi phones are unlocked by default. Ports are usually very fast.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Google Fi')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -630,20 +497,19 @@
             <summary>
               <h3>Cricket</h3>
               <a href="https://www.cricketwireless.com/" target="_blank" class="link-btn" title="View Cricket Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Find in the myCricket app, website, or by calling (800) 274-2538.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Dial *PORT (*7678) from your phone or get it in the app. The PIN is valid for 5 days.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Devices must be active on the Cricket network for 6 months to be unlocked.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Cricket')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Find in the myCricket app, website, or by calling (800) 274-2538.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Dial *PORT (*7678) from your phone or get it in the app. The PIN is valid for 5 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>5555</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Devices must be active on the Cricket network for 6 months to be unlocked.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Cricket')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -654,20 +520,19 @@
             <summary>
               <h3>Mint Mobile</h3>
               <a href="https://www.mintmobile.com/" target="_blank" class="link-btn" title="View Mint Mobile Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>You must request your account number from an agent via live chat on mintmobile.com.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>The agent will provide your PIN during the live chat session.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Devices on a payment plan are locked for 12 months. Phones bought outright unlock after 60 days.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Mint Mobile')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>You must request your account number from an agent via live chat on mintmobile.com.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>The agent will provide your PIN during the live chat session.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7777</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Devices on a payment plan are locked for 12 months. Phones bought outright unlock after 60 days.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Mint Mobile')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -678,20 +543,19 @@
             <summary>
               <h3>Boost Mobile</h3>
               <a href="https://www.boostmobile.com/" target="_blank" class="link-btn" title="View Boost Mobile Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>You must call support at 1-888-266-7848 to get your 9-digit account number.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>This is the 4-digit security PIN you set up when the account was created.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">You may need to speak to a support agent to get the correct information.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Boost Mobile')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>You must call support at 1-888-266-7848 to get your 9-digit account number.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>This is the 4-digit security PIN you set up when the account was created.</p></div>
+                <div class="meta"><h4>SPID</h4><p>5555 (AT&T) / 6755 (Dish)</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">You may need to speak to a support agent to get the correct information.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Boost Mobile')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -702,20 +566,19 @@
             <summary>
               <h3>Consumer Cellular</h3>
               <a href="https://www.consumercellular.com/" target="_blank" class="link-btn" title="View Consumer Cellular Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Find your 9-digit number in your online profile or call (888) 750-5519.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Available in your online account or by calling (888) 750-5519.</p></div>
-                </div>
-                <div class="tips"><h4>Tips</h4><p class="small">Often requires the last 4 digits of your SSN for verification. May need Tier 2 support for port holds.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Consumer Cellular')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Find your 9-digit number in your online profile or call (888) 750-5519.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Available in your online account or by calling (888) 750-5519.</p></div>
+                <div class="meta"><h4>SPID</h4><p>5555 (AT&T) / 7777 (T-Mobile)</p></div>
+              </div>
+              <div class="tips"><h4>Tips</h4><p class="small">Often requires the last 4 digits of your SSN for verification. May need Tier 2 support for port holds.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Consumer Cellular')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -726,20 +589,19 @@
             <summary>
               <h3>Visible</h3>
               <a href="https://www.visible.com/" target="_blank" class="link-btn" title="View Visible Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Find this in the Visible app under "Profile" > "Port-Out PIN."</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Request a PIN in the app/website. It will be sent via email/text and is valid for 7 days.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">The port-out PIN is time-sensitive; always use the most recent one you've received.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Visible')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Find this in the Visible app under "Profile" > "Port-Out PIN."</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Request a PIN in the app/website. It will be sent via email/text and is valid for 7 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">The port-out PIN is time-sensitive; always use the most recent one you've received.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Visible')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -750,20 +612,19 @@
             <summary>
               <h3>Metro by T-Mobile</h3>
               <a href="https://www.metrobyt-mobile.com/" target="_blank" class="link-btn" title="View Metro by T-Mobile Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Your 9-digit number is in your online account or on billing statements.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Request in "My Account" > "Profile". It's sent via text and is valid for 7 days.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">Your 8-digit security PIN (often MMDDYYYY of the account holder) may be needed for verification.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Metro by T-Mobile')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Your 9-digit number is in your online account or on billing statements.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Request in "My Account" > "Profile". It's sent via text and is valid for 7 days.</p></div>
+                <div class="meta"><h4>SPID</h4><p>7777</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">Your 8-digit security PIN (often MMDDYYYY of the account holder) may be needed for verification.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Metro by T-Mobile')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -774,44 +635,42 @@
             <summary>
               <h3>US Cellular</h3>
               <a href="https://www.uscellular.com/" target="_blank" class="link-btn" title="View US Cellular Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Displayed in the top-left corner of your online account page.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>Your account's security PIN, which is often the last 4 digits of the primary phone number.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">For issues, contact customer service at 1-888-944-9400.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('US Cellular')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Displayed in the top-left corner of your online account page.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>Your account's security PIN, which is often the last 4 digits of the primary phone number.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6528</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">For issues, contact customer service at 1-888-944-9400.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('US Cellular')">Elaborate on this</button>
               </div>
             </div>
           </details>
         </section>
-        
+
         <section id="spectrum-mobile" class="card">
           <details>
             <summary>
               <h3>Spectrum Mobile</h3>
               <a href="https://www.spectrum.com/mobile" target="_blank" class="link-btn" title="View Spectrum Mobile Website">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 Carrier Website
               </a>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
-                <div class="meta-grid">
-                  <div class="meta"><h4>Account Number</h4><p>Listed on your billing statement or in your online account.</p></div>
-                  <div class="meta"><h4>Transfer PIN</h4><p>You must call Spectrum support at 833-224-6603 to request a PIN.</p></div>
-                </div>
-                <div class="tips"><h4>Notes</h4><p class="small">You will need to contact Spectrum support for any specific porting details or issues.</p></div>
-                <div style="margin-top: 10px;">
-                  <button class="copy-btn" onclick="elaborate('Spectrum Mobile')" type="button">Elaborate on this</button>
-                </div>
+            <div>
+              <div class="meta-grid">
+                <div class="meta"><h4>Account Number</h4><p>Listed on your billing statement or in your online account.</p></div>
+                <div class="meta"><h4>Transfer PIN</h4><p>You must call Spectrum support at 833-224-6603 to request a PIN.</p></div>
+                <div class="meta"><h4>SPID</h4><p>6666</p></div>
+              </div>
+              <div class="tips"><h4>Notes</h4><p class="small">You will need to contact Spectrum support for any specific porting details or issues.</p></div>
+              <div style="margin-top: 10px;">
+                <button class="copy-btn" onclick="elaborate('Spectrum Mobile')">Elaborate on this</button>
               </div>
             </div>
           </details>
@@ -822,313 +681,324 @@
             <summary>
               <h3>Data Transfer Guide</h3>
             </summary>
-            <div class="details-wrapper">
-              <div class="details-content">
+            <div>
                 <div class="accordion">
                   <details>
                     <summary>Transferring from Android to Android</summary>
-                    <div class="details-wrapper"><div class="details-content">
+                    <div>
                       <p class="small">For most Android devices, the recommended method is to use Google's built-in data transfer utility. During the setup process of a new Android device, it will prompt you to transfer data from your old device. You can choose to use a cable for a faster, more stable transfer or connect wirelessly via Bluetooth or Wi-Fi. Apps, contacts, photos, and settings will all be transferred. Samsung devices also have their own application called Samsung Smart Switch which is a very reliable option for transferring data from any device to a Samsung device.</p>
-                    </div></div>
+                    </div>
                   </details>
                   <details>
                     <summary>Transferring from Android to iPhone</summary>
-                    <div class="details-wrapper"><div class="details-content">
+                    <div>
                       <p class="small">For this transfer, you must use the "Move to iOS" app. This app is available on the Google Play Store and is designed to transfer your contacts, message history, camera photos and videos, web bookmarks, mail accounts, and calendars from your Android phone to a new iPhone. You must start this process during the initial setup of the new iPhone. If the iPhone has already been set up, you will need to factory reset it to access this feature.</p>
-                    </div></div>
+                    </div>
                   </details>
                   <details>
                     <summary>Transferring from iPhone to iPhone</summary>
-                    <div class="details-wrapper"><div class="details-content">
+                    <div>
                       <p class="small">The best way to transfer from an old iPhone to a new one is by using the "Quick Start" feature. By placing your new iPhone near your old iPhone, the new device will detect it and guide you through a wireless data transfer. You can also restore your new iPhone from an iCloud or iTunes backup. If the new phone requires an update during the transfer, it's best to skip the transfer, complete the update, factory reset the device again, and then retry the data transfer for the most stable result.</p>
-                    </div></div>
+                    </div>
                   </details>
                 </div>
-              </div>
             </div>
           </details>
         </section>
-      </div>
 
-      <aside class="sidebar">
         <section id="tech-support" class="card">
             <h3>AI Tech Support &amp; Troubleshooting</h3>
-            <p class="small">Use this tool to ask specific troubleshooting questions. For example, "Why is my T-Mobile number port being rejected?" or "What should I do if a customer forgot their account PIN?"</p>
+            <p class="small">Use the AI search bar below to ask specific troubleshooting questions. For example, "Why is my T-Mobile number port being rejected?" or "What should I do if a customer forgot their account PIN?" The AI will provide detailed, step-by-step guidance.</p>
             <div style="margin-top: 10px;" id="techSupportContainer">
                 <div class="search-container">
-                    <input id="techSupportInput" type="search" placeholder="Ask a tech question..." aria-label="Ask a tech support question" />
-                    <button id="techSupportBtn" class="copy-btn" type="button">Ask</button>
+                    <input id="techSupportInput" type="search" placeholder="Ask a tech support question..." aria-label="Ask a tech support question" />
+                    <button id="techSupportBtn" class="copy-btn">Search</button>
+                    <button id="clearTechSupportBtn" title="Clear Tech Support Search" style="background:transparent;border:0;color:var(--muted);font-weight:600;cursor:pointer">Clear</button>
                 </div>
-                <div class="ai-result hidden" id="techSupportResult"></div>
+                <div class="ai-result" id="techSupportResult" style="display: none;"></div>
             </div>
         </section>
-      </aside>
+
+        <p class="small">Notes: This page was generated from the "Porting Playbook NER" presentation. If you'd like any carrier reordered, sections added/removed, or a printable version, I can update it.</p>
+      </div>
     </main>
   </div>
 
-  <button id="backToTopBtn" title="Back to Top">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-  </button>
-
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- Element Selections ---
-        const filterInput = document.getElementById('filterInput');
-        const clearBtn = document.getElementById('clearBtn');
-        const aiSearchInput = document.getElementById('aiSearchInput');
-        const aiSearchBtn = document.getElementById('aiSearchBtn');
-        const clearAiBtn = document.getElementById('clearAiBtn');
-        const aiResultDiv = document.getElementById('aiResult');
-        const techSupportInput = document.getElementById('techSupportInput');
-        const techSupportBtn = document.getElementById('techSupportBtn');
-        const techSupportResultDiv = document.getElementById('techSupportResult');
-        const sortBtn = document.getElementById('sortAZ');
-        const contentContainer = document.getElementById('content');
-        const themeToggle = document.getElementById('theme-toggle');
-        const backToTopBtn = document.getElementById('backToTopBtn');
-        
-        const originalSections = Array.from(document.querySelectorAll('#content > section.card'));
-        let isSorted = false;
-        let isFetching = false;
-        let debounceTimer;
+    // The URL for our secure Netlify proxy function.
+    const AI_PROXY_URL = '/.netlify/functions/ai-proxy';
 
-        // --- Theme Toggle ---
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        });
+    const originalSections = Array.from(document.querySelectorAll('section.card'));
+    const filterInput = document.getElementById('filterInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const aiSearchInput = document.getElementById('aiSearchInput');
+    const aiSearchBtn = document.getElementById('aiSearchBtn');
+    const clearAiBtn = document.getElementById('clearAiBtn');
+    const aiResultDiv = document.getElementById('aiResult');
+    const techSupportInput = document.getElementById('techSupportInput');
+    const techSupportBtn = document.getElementById('techSupportBtn');
+    const clearTechSupportBtn = document.getElementById('clearTechSupportBtn');
+    const techSupportResultDiv = document.getElementById('techSupportResult');
+    const sortBtn = document.getElementById('sortAZ');
+    const contentContainer = document.getElementById('content');
 
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
+    let isFetching = false;
+    let retries = 0;
+    const maxRetries = 3;
+    const retryDelay = 1000;
+    let isSorted = false;
+
+    /**
+     * Highlights text matches within a given DOM node.
+     * @param {HTMLElement} node The node to search within.
+     * @param {string} term The search term to highlight.
+     */
+    function highlightText(node, term){
+      if(!term) return;
+      const re = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'ig');
+      node.querySelectorAll('mark').forEach(m=>m.replaceWith(m.textContent));
+      node.childNodes.forEach(child=>{
+        if(child.nodeType===3){
+          const match = child.textContent.match(re);
+          if(match){
+            const span = document.createElement('span');
+            span.innerHTML = child.textContent.replace(re, m=>`<mark>${m}</mark>`);
+            child.replaceWith(span);
+          }
+        } else if(child.nodeType===1){
+          highlightText(child, term);
+        }
+      });
+    }
+
+    /**
+     * Filters the displayed content based on the search input.
+     */
+    function runFilter(){
+      const q = filterInput.value.trim().toLowerCase();
+      let any = false;
+
+      const currentSections = Array.from(contentContainer.querySelectorAll('section.card'));
+
+      currentSections.forEach(s=>{
+        // For non-carrier sections, check if any of their content matches the query
+        if (s.id === 'data-transfer' || s.id === 'tech-support' || s.id === 'ai-disclaimer') {
+          const match = q === '' || s.innerText.toLowerCase().includes(q);
+          s.style.display = match ? 'block' : 'none';
+          if (match) any = true;
+          s.querySelectorAll('mark').forEach(m => m.replaceWith(m.textContent));
+          if (q) {
+            highlightText(s, q);
+          }
+          return;
         }
 
-        // --- Back to Top Button ---
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
+        // For carrier sections, check if the content of the details tag matches
+        const detailsContent = s.querySelector('details')?.innerText || '';
+        const match = q === '' || detailsContent.toLowerCase().includes(q);
+        s.style.display = match ? 'block' : 'none';
+        if (match) any = true;
+
+        s.querySelectorAll('mark').forEach(m => m.replaceWith(m.textContent));
+        if (q) {
+          highlightText(s, q);
+        }
+      });
+      if(!any){
+        if(!document.querySelector('.search-empty')){
+          const n = document.createElement('div');
+          n.className='search-empty';
+          n.innerText = 'No results — try another keyword.';
+          document.getElementById('content').appendChild(n);
+        }
+      } else {
+        const se = document.querySelector('.search-empty'); if(se) se.remove();
+      }
+    }
+
+    /**
+     * Performs a search using the Gemini API via our secure proxy.
+     * @param {string} prompt The prompt for the AI.
+     * @param {HTMLElement} resultDiv The div to display the results.
+     */
+    async function runAISearch(prompt, resultDiv) {
+      if (isFetching) return;
+
+      isFetching = true;
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = `<div class="loading">Please wait one moment for search to process...</div>`;
+
+      const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+      const payload = { contents: chatHistory };
+
+      try {
+        const response = await fetch(AI_PROXY_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
 
-        /**
-         * Highlights text matches within a given DOM node.
-         */
-        function highlightText(node, term) {
-            const prevHighlights = node.querySelectorAll('mark');
-            prevHighlights.forEach(mark => {
-                const parent = mark.parentNode;
-                parent.replaceChild(document.createTextNode(mark.textContent), mark);
-                parent.normalize();
-            });
-
-            if (!term) return;
-
-            const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-            const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null, false);
-            let textNode;
-            const nodesToReplace = [];
-
-            while (textNode = walker.nextNode()) {
-                if (textNode.textContent.match(regex)) {
-                    nodesToReplace.push(textNode);
-                }
-            }
-            
-            nodesToReplace.forEach(n => {
-                const fragment = document.createDocumentFragment();
-                n.textContent.split(regex).forEach(part => {
-                    if (part.match(regex)) {
-                        const mark = document.createElement('mark');
-                        mark.textContent = part;
-                        fragment.appendChild(mark);
-                    } else {
-                        fragment.appendChild(document.createTextNode(part));
-                    }
-                });
-                n.parentNode.replaceChild(fragment, n);
-            });
+        if (!response.ok) {
+          throw new Error(`API call failed with status: ${response.status}`);
         }
 
-        /**
-         * Filters the displayed content based on the search input.
-         */
-        function runFilter() {
-            const q = filterInput.value.trim().toLowerCase();
-            let anyVisible = false;
-            
-            const currentSections = Array.from(contentContainer.querySelectorAll('section.card'));
-            
-            currentSections.forEach(s => {
-                const match = q === '' || s.innerText.toLowerCase().includes(q);
-                s.style.display = match ? 'block' : 'none';
-                if (match) {
-                    anyVisible = true;
-                    highlightText(s, q);
-                }
-            });
+        const result = await response.json();
+        const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "No information found for this carrier.";
 
-            const emptyMessage = contentContainer.querySelector('.search-empty');
-            if (!anyVisible && !emptyMessage) {
-                const n = document.createElement('div');
-                n.className = 'search-empty';
-                n.innerText = 'No results — try another keyword.';
-                contentContainer.appendChild(n);
-            } else if (anyVisible && emptyMessage) {
-                emptyMessage.remove();
-            }
-        }
+        // Replace Markdown with HTML for better visual scanning
+        let formattedText = text.trim();
+        formattedText = formattedText.replace(/\*\*(.*?):\*\*/g, '<h4 class="text-md font-bold mt-3 mb-1 text-purple-600">$1</h4>');
+        formattedText = formattedText.replace(/^\s*[-*]\s+(.*)$/gm, '<ul><li class="list-disc ml-5">$1</li></ul>');
+        formattedText = formattedText.replace(/<\/ul>\s*<ul>/g, '');
 
-        filterInput.addEventListener('input', () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(runFilter, 250);
-        });
+        resultDiv.innerHTML = `
+          <h4>AI Search Result</h4>
+          <div class="ai-result-content">${formattedText}</div>
+        `;
 
-        clearBtn.addEventListener('click', () => {
-            filterInput.value = '';
-            filterInput.focus();
-            runFilter();
-        });
+      } catch (error) {
+        console.error("AI Search Error:", error);
+        resultDiv.innerHTML = `
+          <h4>Error</h4>
+          <p class="small">Could not connect to the AI service. This could be due to a network issue or a problem with the server function.</p>
+          <p class="small mt-2"><strong>Details:</strong> ${error.message}</p>
+        `;
+      } finally {
+        isFetching = false;
+      }
+    }
 
-        /**
-         * Performs a search using the Gemini API.
-         */
-        async function runAISearch(prompt, resultDiv) {
-            if (isFetching) return;
+    /**
+     * Handles the "Elaborate on this" button click.
+     * @param {string} carrierName The name of the carrier to elaborate on.
+     */
+    window.elaborate = function(carrierName) {
+      const prompt = `Generate a scannable guide for an Xfinity Mobile employee to help a customer port their number from ${carrierName}. The guide must be for porting IN to Xfinity. Use this exact format:
 
-            isFetching = true;
-            resultDiv.classList.remove('hidden');
-            resultDiv.innerHTML = `<div class="loading-container"><div class="pulsing-loader"><div></div><div></div><div></div></div></div>`;
-            
-            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-            const payload = { contents: chatHistory };
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+**Account Number:**
+- Step-by-step instructions on where to find it.
 
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+**Transfer PIN:**
+- Step-by-step instructions on how to get it and mention its expiration.
 
-                if (!response.ok) {
-                    const errorBody = await response.json();
-                    console.error('API Error:', errorBody);
-                    throw new Error(`API call failed with status: ${response.status}. ${errorBody.error?.message || ''}`);
-                }
+**Troubleshooting & Key Tips:**
+- 2-3 common issues or important tips for this specific carrier.
 
-                const result = await response.json();
-                
-                if (!result.candidates || result.candidates.length === 0) {
-                    throw new Error("No content returned from AI. The response may have been blocked.");
-                }
+**Support Number:**
+- The primary customer support phone number for ${carrierName}.
 
-                const text = result.candidates[0]?.content?.parts?.[0]?.text || "No information found for this carrier.";
+Provide only the information in this format.`;
+      runAISearch(prompt, aiResultDiv);
+      aiSearchInput.value = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-                let formattedText = text.trim()
-                    .replace(/\*\*(.*?):\*\*/g, '<h4>$1</h4>')
-                    .replace(/^\s*[-*]\s+(.*)$/gm, '<ul><li>$1</li></ul>')
-                    .replace(/<\/ul>\s*<ul>/g, '');
-                
-                resultDiv.innerHTML = `<div class="ai-result-content">${formattedText}</div>`;
+    filterInput.addEventListener('input', runFilter);
+    clearBtn.addEventListener('click', ()=>{filterInput.value='';filterInput.focus();runFilter();});
 
-            } catch (error) {
-                console.error("AI Search Error:", error);
-                resultDiv.innerHTML = `
-                  <h4>Error</h4>
-                  <p class="small">Could not connect to the AI service. This could be due to a network issue, a blocked response, or an API error.</p>
-                  <p class="small mt-2"><strong>Details:</strong> ${error.message}</p>
-                `;
-            } finally {
-                isFetching = false;
-            }
-        }
+    aiSearchBtn.addEventListener('click', () => {
+        const query = aiSearchInput.value.trim();
+        if (query) {
+            const prompt = `Generate a scannable guide for an Xfinity Mobile employee to help a customer port their number from "${query}". The guide must be for porting IN to Xfinity. Use this exact format:
 
-        window.elaborate = function(carrierName) {
-            const prompt = `Generate a scannable guide for an Xfinity Mobile employee to help a customer port their number from ${carrierName}. The guide must be for porting IN to Xfinity. Use this exact format:\n\n**Account Number:**\n- Step-by-step instructions on where to find it.\n\n**Transfer PIN:**\n- Step-by-step instructions on how to get it and mention its expiration.\n\n**Troubleshooting & Key Tips:**\n- 2-3 common issues or important tips for this specific carrier.\n\n**Support Number:**\n- The primary customer support phone number for ${carrierName}.\n\nProvide only the information in this format.`;
+**Account Number:**
+- Step-by-step instructions on where to find it.
+
+**Transfer PIN:**
+- Step-by-step instructions on how to get it and mention its expiration.
+
+**Troubleshooting & Key Tips:**
+- 2-3 common issues or important tips for this specific carrier.
+
+**Support Number:**
+- The primary customer support phone number for "${query}".
+
+If you cannot find specific information for "${query}", state that clearly. Provide only the information in this format.`;
             runAISearch(prompt, aiResultDiv);
-            aiSearchInput.value = '';
-            aiResultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        };
-
-        aiSearchBtn.addEventListener('click', () => {
-            const query = aiSearchInput.value.trim();
-            if (query) {
-                const prompt = `Generate a scannable guide for an Xfinity Mobile employee to help a customer port their number from "${query}". The guide must be for porting IN to Xfinity. Use this exact format:\n\n**Account Number:**\n- Step-by-step instructions on where to find it.\n\n**Transfer PIN:**\n- Step-by-step instructions on how to get it and mention its expiration.\n\n**Troubleshooting & Key Tips:**\n- 2-3 common issues or important tips for this specific carrier.\n\n**Support Number:**\n- The primary customer support phone number for "${query}".\n\nIf you cannot find specific information for "${query}", state that clearly. Provide only the information in this format.`;
-                runAISearch(prompt, aiResultDiv);
-            } else {
-                aiResultDiv.classList.add('hidden');
-            }
-        });
-
-        aiSearchInput.addEventListener('keydown', e => e.key === 'Enter' && aiSearchBtn.click());
-
-        clearAiBtn.addEventListener('click', () => {
-            aiSearchInput.value = '';
-            aiResultDiv.classList.add('hidden');
-        });
-
-        techSupportBtn.addEventListener('click', () => {
-            const query = techSupportInput.value.trim();
-            if (query) {
-                const prompt = `As a technical support expert, provide concise and easy-to-read troubleshooting steps for the following scenario: "${query}". Be specific and provide clear, actionable advice. Use bullet points for steps.`;
-                runAISearch(prompt, techSupportResultDiv);
-            } else {
-                techSupportResultDiv.classList.add('hidden');
-            }
-        });
-
-        techSupportInput.addEventListener('keydown', e => e.key === 'Enter' && techSupportBtn.click());
-
-        document.getElementById('expandAll').addEventListener('click', () => {
-            document.querySelectorAll('details').forEach(d => d.open = true);
-        });
-        document.getElementById('collapseAll').addEventListener('click', () => {
-            document.querySelectorAll('details').forEach(d => d.open = false);
-        });
-
-        // --- Efficient Sorting ---
-        sortBtn.addEventListener('click', () => {
-            if (isSorted) {
-                originalSections.forEach(section => contentContainer.appendChild(section));
-                isSorted = false;
-                sortBtn.textContent = 'Sort A-Z';
-                sortBtn.classList.remove('active');
-            } else {
-                const carrierSections = Array.from(contentContainer.querySelectorAll('section.card'))
-                    .filter(s => !['data-transfer', 'ai-disclaimer'].includes(s.id));
-                
-                carrierSections.sort((a, b) => {
-                    const textA = a.querySelector('h3').innerText;
-                    const textB = b.querySelector('h3').innerText;
-                    return textA.localeCompare(textB);
-                });
-
-                carrierSections.forEach(section => contentContainer.appendChild(section));
-                
-                originalSections.forEach(section => {
-                    if (['data-transfer'].includes(section.id)) {
-                        contentContainer.appendChild(section);
-                    }
-                });
-
-                isSorted = true;
-                sortBtn.textContent = 'Sorted A-Z';
-                sortBtn.classList.add('active');
-            }
-        });
-
-        document.addEventListener('keydown', e => {
-            if (e.key === '/' && document.activeElement !== filterInput && document.activeElement !== aiSearchInput && document.activeElement !== techSupportInput) {
-                e.preventDefault();
-                filterInput.focus();
-            }
-        });
+        } else {
+            aiResultDiv.style.display = 'none';
+        }
     });
+
+    aiSearchInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        aiSearchBtn.click();
+      }
+    });
+
+    clearAiBtn.addEventListener('click', ()=>{
+      aiSearchInput.value = '';
+      aiResultDiv.style.display = 'none';
+    });
+
+    techSupportBtn.addEventListener('click', () => {
+        const query = techSupportInput.value.trim();
+        if (query) {
+            // UPDATED PROMPT: More general tech support, not porting-specific.
+            const prompt = `As a technical support expert, provide concise and easy-to-read troubleshooting steps for the following scenario: "${query}". Be specific and provide clear, actionable advice. Use bullet points for steps.`;
+            runAISearch(prompt, techSupportResultDiv);
+        } else {
+            techSupportResultDiv.style.display = 'none';
+        }
+    });
+
+    techSupportInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        techSupportBtn.click();
+      }
+    });
+
+    clearTechSupportBtn.addEventListener('click', ()=>{
+      techSupportInput.value = '';
+      techSupportResultDiv.style.display = 'none';
+    });
+
+    document.getElementById('expandAll').addEventListener('click', ()=>{
+      document.querySelectorAll('details').forEach(d=>d.open=true);
+    });
+    document.getElementById('collapseAll').addEventListener('click', ()=>{
+      document.querySelectorAll('details').forEach(d=>d.open=false);
+    });
+
+    // New sort functionality
+    sortBtn.addEventListener('click', () => {
+        const carrierSections = Array.from(contentContainer.querySelectorAll('section.card')).filter(s => !['data-transfer', 'tech-support', 'ai-disclaimer'].includes(s.id));
+        const nonCarrierSections = Array.from(contentContainer.querySelectorAll('section.card')).filter(s => ['data-transfer', 'tech-support', 'ai-disclaimer'].includes(s.id));
+
+        if (isSorted) {
+            // Revert to original order
+            contentContainer.innerHTML = '';
+            originalSections.forEach(s => contentContainer.appendChild(s));
+            isSorted = false;
+        } else {
+            // Sort alphabetically
+            carrierSections.sort((a, b) => {
+                const textA = a.querySelector('h3').innerText.toUpperCase();
+                const textB = b.querySelector('h3').innerText.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            });
+            contentContainer.innerHTML = '';
+            // Add disclaimer first
+            const disclaimer = originalSections.find(s => s.id === 'ai-disclaimer');
+            if(disclaimer) contentContainer.appendChild(disclaimer);
+
+            carrierSections.forEach(s => contentContainer.appendChild(s));
+
+            // Add other non-carrier sections at the end
+            nonCarrierSections.forEach(s => {
+                if(s.id !== 'ai-disclaimer') contentContainer.appendChild(s)
+            });
+            isSorted = true;
+        }
+    });
+
+    document.addEventListener('keydown', e=>{
+      if(e.key==='/' && document.activeElement!==filterInput && document.activeElement!==aiSearchInput){ e.preventDefault(); filterInput.focus(); }
+    });
+
+    if('scrollBehavior' in document.documentElement.style){
+      history.scrollRestoration = 'manual';
+    }
   </script>
 </body>
 </html>
